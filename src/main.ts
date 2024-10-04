@@ -624,17 +624,16 @@ function onMouseDown(e: MouseEvent) {
       if (pos.x >= button.x && pos.x < button.x + button.width && pos.y >= button.y && pos.y < button.y + button.height) {
           if (button.text === "New Game") {
               newGame();
-          } else if (button.text.includes("Show Moves")) {
+          } else if (button.text.includes("Show Moves") || button.text.includes("Hide Moves")) {
               showmoves = !showmoves;
               button.text = (showmoves ? "Hide" : "Show") + " Moves";
-          } else if (button.text.includes("Enable AI Bot")) {
+          } else if (button.text.includes("Enable AI Bot") || button.text.includes("Disable AI Bot")) {
               aibot = !aibot;
               button.text = (aibot ? "Disable" : "Enable") + " AI Bot";
           }
       }
   }
 }
-
 
 function onMouseUp(e: MouseEvent) {
     drag = false;
