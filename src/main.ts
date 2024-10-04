@@ -517,6 +517,8 @@ function removeClusters() {
     loopClusters((index, column, row, cluster) => {
         console.info(`${index}`);
         console.info(`${cluster}`);
+        console.info(JSON.stringify(index, null, 2));
+        console.info(JSON.stringify(cluster, null, 2));
         level.tiles[column][row].type = -1;
     });
 
@@ -638,12 +640,16 @@ function onMouseDown(e: MouseEvent) {
 }
 
 function onMouseUp(e: MouseEvent) {
-    console.info(`${e}`);
+    console.info(JSON.stringify(e, null, 2));
+    console.info(`Mouse Up at (${e.clientX}, ${e.clientY})`);
+    console.info(e);
     drag = false;
 }
 
 function onMouseOut(e: MouseEvent) {
-    console.info(`${e}`);
+    console.info(JSON.stringify(e, null, 2));
+    console.info(`Mouse Out at (${e.clientX}, ${e.clientY})`);
+    console.info(e);
     drag = false;
 }
 
