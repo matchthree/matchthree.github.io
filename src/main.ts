@@ -515,6 +515,8 @@ function loopClusters(func: (index: number, column: number, row: number, cluster
 
 function removeClusters() {
     loopClusters((index, column, row, cluster) => {
+        console.info(`${index}`);
+        console.info(`${cluster}`);
         level.tiles[column][row].type = -1;
     });
 
@@ -636,10 +638,12 @@ function onMouseDown(e: MouseEvent) {
 }
 
 function onMouseUp(e: MouseEvent) {
+    console.info(`${e}`);
     drag = false;
 }
 
 function onMouseOut(e: MouseEvent) {
+    console.info(`${e}`);
     drag = false;
 }
 
