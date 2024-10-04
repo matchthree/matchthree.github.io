@@ -228,32 +228,32 @@ window.onload = function() {
   }
 
   function render() {
-      drawFrame();
-      context.fillStyle = "#000000";
-      context.font = "24px Verdana";
-      drawCenterText("Score:", 30, level.y + 40, 150);
-      drawCenterText(score.toString(), 30, level.y + 70, 150);
-      drawButtons();
+    drawFrame();
+    context.fillStyle = "#000000";
+    context.font = "24px Verdana";
+    drawCenterText("Score:", 30, level.y + 40, 150);
+    drawCenterText(score.toString(), 30, level.y + 70, 150);
+    drawButtons();
 
-      const levelwidth = level.columns * level.tilewidth;
-      const levelheight = level.rows * level.tileheight;
-      context.fillStyle = "#000000";
-      context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
+    const levelwidth = level.columns * level.tilewidth;
+    const levelheight = level.rows * level.tileheight;
+    context.fillStyle = "#000000";
+    context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
 
-      renderTiles();
-      renderClusters();
+    renderTiles();
+    renderClusters();
 
-      if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
-          renderMoves();
-      }
+    if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
+        renderMoves();
+    }
 
-      if (gameover) {
-          context.fillStyle = "rgba(0, 0, 0, 0.8)";
-          context.fillRect(level.x, level.y, levelwidth, levelheight);
-          context.fillStyle = "#ffffff";
-          context.font = "24px Verdana";
-          drawCenterText("Game Over!", level.x, level.y + levelheight / 2 + 10, levelwidth);
-      }
+    if (gameover) {
+        context.fillStyle = "rgba(0, 0, 0, 0.8)";
+        context.fillRect(level.x, level.y, levelwidth, levelheight);
+        context.fillStyle = "#ffffff";
+        context.font = "24px Verdana";
+        drawCenterText("Game Over!", level.x, level.y + levelheight / 2 + 10, levelwidth);
+    }
   }
 
   function drawFrame() {
@@ -590,50 +590,51 @@ function onMouseMove(e: MouseEvent) {
 }
 
 function onMouseDown(e: MouseEvent) {
-    const pos = getMousePos(canvas, e);
+  const pos = getMousePos(canvas, e);
 
-    if (!drag) {
-        const mt = getMouseTile(pos);
+  if (!drag) {
+      const mt = getMouseTile(pos);
 
-        if (mt.valid) {
-            let swapped = false;
-            if (level.selectedtile.selected) {
-                if (mt.x === level.selectedtile.column && mt.y === level.selectedtile.row) {
-                    level.selectedtile.selected = false;
-                    drag = true;
-                    return;
-                } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
-                    mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
-                    swapped = true;
-                }
-            }
+      if (mt.valid) {
+          let swapped = false;
+          if (level.selectedtile.selected) {
+              if (mt.x === level.selectedtile.column && mt.y === level.selectedtile.row) {
+                  level.selectedtile.selected = false;
+                  drag = true;
+                  return;
+              } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
+                  mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
+                  swapped = true;
+              }
+          }
 
-            if (!swapped) {
-                level.selectedtile.column = mt.x;
-                level.selectedtile.row = mt.y;
-                level.selectedtile.selected = true;
-            }
-        } else {
-            level.selectedtile.selected = false;
-        }
+          if (!swapped) {
+              level.selectedtile.column = mt.x;
+              level.selectedtile.row = mt.y;
+              level.selectedtile.selected = true;
+          }
+      } else {
+          level.selectedtile.selected = false;
+      }
 
-        drag = true;
-    }
+      drag = true;
+  }
 
-    for (const button of buttons) {
-        if (pos.x >= button.x && pos.x < button.x + button.width && pos.y >= button.y && pos.y < button.y + button.height) {
-            if (button.text === "New Game") {
-                newGame();
-            } else if (button.text === "Show Moves") {
-                showmoves = !showmoves;
-                button.text = (showmoves ? "Hide" : "Show") + " Moves";
-            } else if (button.text === "Enable AI Bot") {
-                aibot = !aibot;
-                button.text = (aibot ? "Disable" : "Enable") + " AI Bot";
-            }
-        }
-    }
+  for (const button of buttons) {
+      if (pos.x >= button.x && pos.x < button.x + button.width && pos.y >= button.y && pos.y < button.y + button.height) {
+          if (button.text === "New Game") {
+              newGame();
+          } else if (button.text.includes("Show Moves")) {
+              showmoves = !showmoves;
+              button.text = (showmoves ? "Hide" : "Show") + " Moves";
+          } else if (button.text.includes("Enable AI Bot")) {
+              aibot = !aibot;
+              button.text = (aibot ? "Disable" : "Enable") + " AI Bot";
+          }
+      }
+  }
 }
+
 
 function onMouseUp(e: MouseEvent) {
     drag = false;
