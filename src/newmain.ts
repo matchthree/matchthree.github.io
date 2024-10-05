@@ -245,234 +245,223 @@ function renderTiles() {
                 drawTile(coord.tilex, coord.tiley, col[0], col[1], col[2]);
             }
 
-            function renderTiles() {
-                for (let i = 0; i < level.columns; i++) {
-                    for (let j = 0; j < level.rows; j++) {
-                        const shift = level.tiles[i][j].shift;
-                        const coord = getTileCoordinate(i, j, 0, (animationtime / animationtimetotal) * shift);
-            
-                        if (level.tiles[i][j].type >= 0) {
-                            const col = tilecolors[level.tiles[i][j].type];
-                            drawTile(coord.tilex, coord.tiley, col[0], col[1], col[2]);
-                        }
-            
-                        if (level.selectedtile.selected) {
-                            if (level.selectedtile.column === i && level.selectedtile.row === j) {
-                                drawTile(coord.tilex, coord.tiley, 255, 0, 0);
-                            }
-                        }
-                    }
-                }
-            
-                if (gamestate === gamestates.resolve && (animationstate === 2 || animationstate === 3)) {
-                    const shiftx = currentmove.column2 - currentmove.column1;
-                    const shifty = currentmove.row2 - currentmove.row1;
-            
-                    const coord1 = getTileCoordinate(currentmove.column1, currentmove.row1, 0, 0);
-                    const coord1shift = getTileCoordinate(currentmove.column1, currentmove.row1, (animationtime / animationtimetotal) * shiftx, (animationtime / animationtimetotal) * shifty);
-                    const col1 = tilecolors[level.tiles[currentmove.column1][currentmove.row1].type];
-            
-                    const coord2 = getTileCoordinate(currentmove.column2, currentmove.row2, 0, 0);
-                    const coord2shift = getTileCoordinate(currentmove.column2, currentmove.row2, (animationtime / animationtimetotal) * -shiftx, (animationtime / animationtimetotal) * -shifty);
-                    const col2 = tilecolors[level.tiles[currentmove.column2][currentmove.row2].type];
-            
-                    drawTile(coord1.tilex, coord1.tiley, 0, 0, 0);
-                    drawTile(coord2.tilex, coord2.tiley, 0, 0, 0);
-            
-                    if (animationstate === 2) {
-                        drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
-                        drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
-                    } else {
-                        drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
-                        drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
-                    }
+            if (level.selectedtile.selected) {
+                if (level.selectedtile.column === i && level.selectedtile.row === j) {
+                    drawTile(coord.tilex, coord.tiley, 255, 0, 0);
                 }
             }
-            
-            function getTileCoordinate(column: number, row: number, columnoffset: number, rowoffset: number) {
-                const tilex = level.x + (column + columnoffset) * level.tilewidth;
-                const tiley = level.y + (row + rowoffset) * level.tileheight;
-                return { tilex, tiley };
+        }
+    }
+
+    if (gamestate === gamestates.resolve && (animationstate === 2 || animationstate === 3)) {
+        const shiftx = currentmove.column2 - currentmove.column1;
+        const shifty = currentmove.row2 - currentmove.row1;
+
+        const coord1 = getTileCoordinate(currentmove.column1, currentmove.row1, 0, 0);
+        const coord1shift = getTileCoordinate(currentmove.column1, currentmove.row1, (animationtime / animationtimetotal) * shiftx, (animationtime / animationtimetotal) * shifty);
+        const col1 = tilecolors[level.tiles[currentmove.column1][currentmove.row1].type];
+
+        const coord2 = getTileCoordinate(currentmove.column2, currentmove.row2, 0, 0);
+        const coord2shift = getTileCoordinate(currentmove.column2, currentmove.row2, (animationtime / animationtimetotal) * -shiftx, (animationtime / animationtimetotal) * -shifty);
+        const col2 = tilecolors[level.tiles[currentmove.column2][currentmove.row2].type];
+
+        drawTile(coord1.tilex, coord1.tiley, 0, 0, 0);
+        drawTile(coord2.tilex, coord2.tiley, 0, 0, 0);
+
+        if (animationstate === 2) {
+            drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
+            drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
+        } else {
+            drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
+            drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
+        }
+    }
+}
+
+function getTileCoordinate(column: number, row: number, columnoffset: number, rowoffset: number) {
+    const tilex = level.x + (column + columnoffset) * level.tilewidth;
+    const tiley = level.y + (row + rowoffset) * level.tileheight;
+    return { tilex, tiley };
+}
+
+function drawTile(x: number, y: number, r: number, g: number, b: number) {
+    context.fillStyle = `rgb(${r},${g},${b})`;
+    context.fillRect(x + 2, y + 2, level.tilewidth - 4, level.tileheight - 4);
+}
+
+function renderClusters() {
+    for (const cluster of clusters) {
+        const coord = getTileCoordinate(cluster.column, cluster.row, 0, 0);
+
+        if (cluster.horizontal) {
+            context.fillStyle = "#00ff00";
+            context.fillRect(coord.tilex + level.tilewidth / 2, coord.tiley + level.tileheight / 2 - 4, (cluster.length - 1) * level.tilewidth, 8);
+        } else {
+            context.fillStyle = "#0000ff";
+            context.fillRect(coord.tilex + level.tilewidth / 2 - 4, coord.tiley + level.tileheight / 2, 8, (cluster.length - 1) * level.tileheight);
+        }
+    }
+}
+
+function renderMoves() {
+    for (const move of moves) {
+        const coord1 = getTileCoordinate(move.column1, move.row1, 0, 0);
+        const coord2 = getTileCoordinate(move.column2, move.row2, 0, 0);
+
+        context.strokeStyle = "#ff0000";
+        context.beginPath();
+        context.moveTo(coord1.tilex + level.tilewidth / 2, coord1.tiley + level.tileheight / 2);
+        context.lineTo(coord2.tilex + level.tilewidth / 2, coord2.tiley + level.tileheight / 2);
+        context.stroke();
+    }
+}
+
+function newGame() {
+    score = 0;
+    gamestate = gamestates.ready;
+    gameover = false;
+    createLevel();
+    findMoves();
+    findClusters();
+}
+
+function createLevel() {
+    let done = false;
+
+    while (!done) {
+        for (let i = 0; i < level.columns; i++) {
+            for (let j = 0; j < level.rows; j++) {
+                level.tiles[i][j].type = getRandomTile();
             }
-            
-            function drawTile(x: number, y: number, r: number, g: number, b: number) {
-                context.fillStyle = `rgb(${r},${g},${b})`;
-                context.fillRect(x + 2, y + 2, level.tilewidth - 4, level.tileheight - 4);
-            }
-            
-            function renderClusters() {
-                for (const cluster of clusters) {
-                    const coord = getTileCoordinate(cluster.column, cluster.row, 0, 0);
-            
-                    if (cluster.horizontal) {
-                        context.fillStyle = "#00ff00";
-                        context.fillRect(coord.tilex + level.tilewidth / 2, coord.tiley + level.tileheight / 2 - 4, (cluster.length - 1) * level.tilewidth, 8);
-                    } else {
-                        context.fillStyle = "#0000ff";
-                        context.fillRect(coord.tilex + level.tilewidth / 2 - 4, coord.tiley + level.tileheight / 2, 8, (cluster.length - 1) * level.tileheight);
-                    }
+        }
+
+        resolveClusters();
+        findMoves();
+
+        if (moves.length > 0) {
+            done = true;
+        }
+    }
+}
+
+function getRandomTile() {
+    return Math.floor(Math.random() * tilecolors.length);
+}
+
+function resolveClusters() {
+    findClusters();
+
+    while (clusters.length > 0) {
+        removeClusters();
+        shiftTiles();
+        findClusters();
+    }
+}
+
+function findClusters() {
+    clusters = [];
+
+    for (let j = 0; j < level.rows; j++) {
+        let matchlength = 1;
+        for (let i = 0; i < level.columns; i++) {
+            let checkcluster = false;
+
+            if (i === level.columns - 1) {
+                checkcluster = true;
+            } else {
+                if (level.tiles[i][j].type === level.tiles[i + 1][j].type && level.tiles[i][j].type !== -1) {
+                    matchlength += 1;
+                } else {
+                    checkcluster = true;
                 }
             }
-            
-            function renderMoves() {
-                for (const move of moves) {
-                    const coord1 = getTileCoordinate(move.column1, move.row1, 0, 0);
-                    const coord2 = getTileCoordinate(move.column2, move.row2, 0, 0);
-            
-                    context.strokeStyle = "#ff0000";
-                    context.beginPath();
-                    context.moveTo(coord1.tilex + level.tilewidth / 2, coord1.tiley + level.tileheight / 2);
-                    context.lineTo(coord2.tilex + level.tilewidth / 2, coord2.tiley + level.tileheight / 2);
-                    context.stroke();
+
+            if (checkcluster) {
+                if (matchlength >= 3) {
+                    clusters.push({ column: i + 1 - matchlength, row: j, length: matchlength, horizontal: true });
+                }
+                matchlength = 1;
+            }
+        }
+    }
+
+    for (let i = 0; i < level.columns; i++) {
+        let matchlength = 1;
+        for (let j = 0; j < level.rows; j++) {
+            let checkcluster = false;
+
+            if (j === level.rows - 1) {
+                checkcluster = true;
+            } else {
+                if (level.tiles[i][j].type === level.tiles[i][j + 1].type && level.tiles[i][j].type !== -1) {
+                    matchlength += 1;
+                } else {
+                    checkcluster = true;
                 }
             }
-            
-            function newGame() {
-                score = 0;
-                gamestate = gamestates.ready;
-                gameover = false;
-                createLevel();
-                findMoves();
-                findClusters();
-            }
-            
-            function createLevel() {
-                let done = false;
-            
-                while (!done) {
-                    for (let i = 0; i < level.columns; i++) {
-                        for (let j = 0; j < level.rows; j++) {
-                            level.tiles[i][j].type = getRandomTile();
-                        }
-                    }
-            
-                    resolveClusters();
-                    findMoves();
-            
-                    if (moves.length > 0) {
-                        done = true;
-                    }
+
+            if (checkcluster) {
+                if (matchlength >= 3) {
+                    clusters.push({ column: i, row: j + 1 - matchlength, length: matchlength, horizontal: false });
                 }
+                matchlength = 1;
             }
-            
-            function getRandomTile() {
-                return Math.floor(Math.random() * tilecolors.length);
+        }
+    }
+}
+
+function findMoves() {
+    moves = [];
+
+    for (let j = 0; j < level.rows; j++) {
+        for (let i = 0; i < level.columns - 1; i++) {
+            swap(i, j, i + 1, j);
+            findClusters();
+            swap(i, j, i + 1, j);
+
+            if (clusters.length > 0) {
+                moves.push({ column1: i, row1: j, column2: i + 1, row2: j });
             }
-            
-            function resolveClusters() {
-                findClusters();
-            
-                while (clusters.length > 0) {
-                    removeClusters();
-                    shiftTiles();
-                    findClusters();
-                }
+        }
+    }
+
+    for (let i = 0; i < level.columns; i++) {
+        for (let j = 0; j < level.rows - 1; j++) {
+            swap(i, j, i, j + 1);
+            findClusters();
+            swap(i, j, i, j + 1);
+
+            if (clusters.length > 0) {
+                moves.push({ column1: i, row1: j, column2: i, row2: j + 1 });
             }
-            
-            function findClusters() {
-                clusters = [];
-            
-                for (let j = 0; j < level.rows; j++) {
-                    let matchlength = 1;
-                    for (let i = 0; i < level.columns; i++) {
-                        let checkcluster = false;
-            
-                        if (i === level.columns - 1) {
-                            checkcluster = true;
-                        } else {
-                            if (level.tiles[i][j].type === level.tiles[i + 1][j].type && level.tiles[i][j].type !== -1) {
-                                matchlength += 1;
-                            } else {
-                                checkcluster = true;
-                            }
-                        }
-            
-                        if (checkcluster) {
-                            if (matchlength >= 3) {
-                                clusters.push({ column: i + 1 - matchlength, row: j, length: matchlength, horizontal: true });
-                            }
-                            matchlength = 1;
-                        }
-                    }
-                }
-            
-                for (let i = 0; i < level.columns; i++) {
-                    let matchlength = 1;
-                    for (let j = 0; j < level.rows; j++) {
-                        let checkcluster = false;
-            
-                        if (j === level.rows - 1) {
-                            checkcluster = true;
-                        } else {
-                            if (level.tiles[i][j].type === level.tiles[i][j + 1].type && level.tiles[i][j].type !== -1) {
-                                matchlength += 1;
-                            } else {
-                                checkcluster = true;
-                            }
-                        }
-            
-                        if (checkcluster) {
-                            if (matchlength >= 3) {
-                                clusters.push({ column: i, row: j + 1 - matchlength, length: matchlength, horizontal: false });
-                            }
-                            matchlength = 1;
-                        }
-                    }
-                }
+        }
+    }
+
+    clusters = [];
+}
+
+function loopClusters(func: (index: number, column: number, row: number, cluster: Cluster) => void) {
+    for (let i = 0; i < clusters.length; i++) {
+        const cluster = clusters[i];
+        let coffset = 0;
+        let roffset = 0;
+        for (let j = 0; j < cluster.length; j++) {
+            func(i, cluster.column + coffset, cluster.row + roffset, cluster);
+
+            if (cluster.horizontal) {
+                coffset++;
+            } else {
+                roffset++;
             }
-            
-            function findMoves() {
-                moves = [];
-            
-                for (let j = 0; j < level.rows; j++) {
-                    for (let i = 0; i < level.columns - 1; i++) {
-                        swap(i, j, i + 1, j);
-                        findClusters();
-                        swap(i, j, i + 1, j);
-            
-                        if (clusters.length > 0) {
-                            moves.push({ column1: i, row1: j, column2: i + 1, row2: j });
-                        }
-                    }
-                }
-            
-                for (let i = 0; i < level.columns; i++) {
-                    for (let j = 0; j < level.rows - 1; j++) {
-                        swap(i, j, i, j + 1);
-                        findClusters();
-                        swap(i, j, i, j + 1);
-            
-                        if (clusters.length > 0) {
-                            moves.push({ column1: i, row1: j, column2: i, row2: j + 1 });
-                        }
-                    }
-                }
-            
-                clusters = [];
-            }
-            
-            function loopClusters(func: (index: number, column: number, row: number, cluster: Cluster) => void) {
-                for (let i = 0; i < clusters.length; i++) {
-                    const cluster = clusters[i];
-                    let coffset = 0;
-                    let roffset = 0;
-                    for (let j = 0; j < cluster.length; j++) {
-                        func(i, cluster.column + coffset, cluster.row + roffset, cluster);
-            
-                        if (cluster.horizontal) {
-                            coffset++;
-                        } else {
-                            roffset++;
-                        }
-                    }
-                }
-            }
-            
-            function removeClusters() {
-                loopClusters((index, column, row, cluster) => {
-                    level.tiles[column][row].type = -1;
-                });
-            
-                for (let i = 0; i < level.columns; i++) {
-                    let shift = 0;
-                    for (let j = level
+        }
+    }
+}
+
+function removeClusters() {
+    loopClusters((index, column, row, cluster) => {
+        level.tiles[column][row].type = -1;
+    });
+
+    for (let i = 0; i < level.columns; i++) {
+        let shift = 0;
+        for (let j = level
