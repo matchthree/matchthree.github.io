@@ -63,8 +63,45 @@ interface Button {
 }
 
 window.onload = function() {
-  const canvas = document.getElementById("viewport") as HTMLCanvasElement;
-  const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const canvas = document.getElementById("viewport") as HTMLCanvasElement;
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+    // Resize canvas to fit the window
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        level.tilewidth = canvas.width / level.columns;
+        level.tileheight = canvas.height / level.rows;
+        render();
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Add touch event listeners
+    canvas.addEventListener("touchstart", onTouchStart);
+    canvas.addEventListener("touchmove", onTouchMove);
+    canvas.addEventListener("touchend", onTouchEnd);
+
+    // Initialize the game
+    init();
+
+    function onTouchStart(e: TouchEvent) {
+        const touch = e.touches[0];
+        const pos = getMousePos(canvas, touch);
+        onMouseDown({ clientX: pos.x, clientY: pos.y } as MouseEvent);
+    }
+
+    function onTouchMove(e: TouchEvent) {
+        const touch = e.touches[0];
+        const pos = getMousePos(canvas, touch);
+        onMouseMove({ clientX: pos.x, clientY: pos.y } as MouseEvent);
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+        onMouseUp({ clientX: 0, clientY: 0 } as MouseEvent);
+    }
+
+    // Rest of your game code...  
 
   let lastframe = 0;
   let fpstime = 0;
