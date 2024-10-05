@@ -1,16 +1,19 @@
-window.onload = function () {
+window.onload = function() {
     const canvas = document.getElementById("viewport") as HTMLCanvasElement;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-
+  
     function resizeCanvas() {
-        const canvas = document.getElementById("viewport") as HTMLCanvasElement;
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas(); // Initial resize
-      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+  
+      // Adjust level dimensions and tile size
+      level.x = canvas.width * 0.1;
+      level.y = canvas.height * 0.1;
+      level.tilewidth = (canvas.width * 0.8) / level.columns;
+      level.tileheight = (canvas.height * 0.8) / level.rows;
+    }
+  
+    window.addEventListener('resize', resizeCanvas);
 
     let lastframe = 0;
     let fpstime = 0;
@@ -602,6 +605,7 @@ window.onload = function () {
     }
 
     init();
+    resizeCanvas(); // Initial resize     
 };
 
 interface Tile {
