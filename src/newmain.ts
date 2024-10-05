@@ -464,4 +464,136 @@ function removeClusters() {
 
     for (let i = 0; i < level.columns; i++) {
         let shift = 0;
-        for (let j = level
+        for (let j = level.rows - 1; j >= 0; j--) {
+            if (level.tiles[i][j].type === -1) {
+                shift++;
+                level.tiles[i][j].shift = 0;
+            } else {
+                level.tiles[i][j].shift = shift;
+            }
+        }
+    }
+}
+
+function shiftTiles() {
+    for (let i = 0; i < level.columns; i++) {
+        for (let j = level.rows - 1; j >= 0; j--) {
+            if (level.tiles[i][j].type === -1) {
+                level.tiles[i][j].type = getRandomTile();
+            } else {
+                const shift = level.tiles[i][j].shift;
+                if (shift > 0) {
+                    swap(i, j, i, j + shift);
+                }
+            }
+            level.tiles[i][j].shift = 0;
+        }
+    }
+}
+
+function getMouseTile(pos: { x: number; y: number }) {
+    const tx = Math.floor((pos.x - level.x) / level.tilewidth);
+    const ty = Math.floor((pos.y - level.y) / level.tileheight);
+
+    if (tx >= 0 && tx < level.columns && ty >= 0 && ty < level.rows) {
+        return { valid: true, x: tx, y: ty };
+    }
+
+    return { valid: false, x: 0, y: 0 };
+}
+
+function canSwap(x1: number, y1: number, x2: number, y2: number) {
+    return (Math.abs(x1 - x2) === 1 && y1 === y2) || (Math.abs(y1 - y2) === 1 && x1 === x2);
+}
+
+function swap(x1: number, y1: number, x2: number, y2: number) {
+    const typeswap = level.tiles[x1][y1].type;
+    level.tiles[x1][y1].type = level.tiles[x2][y2].type;
+    level.tiles[x2][y2].type = typeswap;
+}
+
+function mouseSwap(c1: number, r1: number, c2: number, r2: number) {
+    currentmove = { column1: c1, row1: r1, column2: c2, row2: r2 };
+    level.selectedtile.selected = false;
+    animationstate = 2;
+    animationtime = 0;
+    gamestate = gamestates.resolve;
+}
+
+function onMouseMove(e: MouseEvent) {
+    const pos = getMousePos(canvas, e);
+
+    if (drag && level.selectedtile.selected) {
+        const mt = getMouseTile(pos);
+        if (mt.valid) {
+            if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
+                mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
+            }
+        }
+    }
+}
+
+function onMouseDown(e: MouseEvent) {
+  const pos = getMousePos(canvas, e);
+
+  if (!drag) {
+      const mt = getMouseTile(pos);
+
+      if (mt.valid) {
+          let swapped = false;
+          if (level.selectedtile.selected) {
+              if (mt.x === level.selectedtile.column && mt.y === level.selectedtile.row) {
+                  level.selectedtile.selected = false;
+                  drag = true;
+                  return;
+              } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
+                  mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
+                  swapped = true;
+              }
+          }
+
+          if (!swapped) {
+              level.selectedtile.column = mt.x;
+              level.selectedtile.row = mt.y;
+              level.selectedtile.selected = true;
+          }
+      } else {
+          level.selectedtile.selected = false;
+      }
+
+      drag = true;
+  }
+
+  for (const button of buttons) {
+      if (pos.x >= button.x && pos.x < button.x + button.width && pos.y >= button.y && pos.y < button.y + button.height) {
+          if (button.text === "New Game") {
+              newGame();
+          } else if (button.text.includes("Show Moves") || button.text.includes("Hide Moves")) {
+              showmoves = !showmoves;
+              button.text = (showmoves ? "Hide" : "Show") + " Moves";
+          } else if (button.text.includes("Enable AI Bot") || button.text.includes("Disable AI Bot")) {
+              aibot = !aibot;
+              button.text = (aibot ? "Disable" : "Enable") + " AI Bot";
+          }
+      }
+  }
+}
+
+function onMouseUp(e: MouseEvent) {
+    drag = false;
+}
+
+function onMouseOut(e: MouseEvent) {
+    drag = false;
+}
+
+function getMousePos(canvas: HTMLCanvasElement, e: MouseEvent) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: Math.round((e.clientX - rect.left) / (rect.right - rect.left) * canvas.width),
+        y: Math.round((e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
+    };
+}
+
+init();
+};
