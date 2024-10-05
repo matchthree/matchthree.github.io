@@ -11,10 +11,22 @@ window.onload = function() {
       level.y = canvas.height * 0.1;
       level.tilewidth = (canvas.width * 0.8) / level.columns;
       level.tileheight = (canvas.height * 0.8) / level.rows;
+  
+      // Adjust button positions
+      buttons[0].x = canvas.width * 0.05;
+      buttons[0].y = canvas.height * 0.05;
+      buttons[1].x = canvas.width * 0.05;
+      buttons[1].y = canvas.height * 0.1;
+      buttons[2].x = canvas.width * 0.05;
+      buttons[2].y = canvas.height * 0.15;
+  
+      // Adjust score position
+      scoreX = canvas.width * 0.05;
+      scoreY = canvas.height * 0.02;
     }
   
     window.addEventListener('resize', resizeCanvas);
-
+  
     let lastframe = 0;
     let fpstime = 0;
     let framecount = 0;
@@ -176,35 +188,6 @@ window.onload = function() {
         context.fillText(text, x + (width - textdim.width) / 2, y);
     }
 
-    function render() {
-        drawFrame();
-        context.fillStyle = "#000000";
-        context.font = "24px Verdana";
-        drawCenterText("Score:", 30, level.y + 40, 150);
-        drawCenterText(score.toString(), 30, level.y + 70, 150);
-        drawButtons();
-
-        const levelwidth = level.columns * level.tilewidth;
-        const levelheight = level.rows * level.tileheight;
-        context.fillStyle = "#000000";
-        context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
-
-        renderTiles();
-        renderClusters();
-
-        if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
-            renderMoves();
-        }
-
-        if (gameover) {
-            context.fillStyle = "rgba(0, 0, 0, 0.8)";
-            context.fillRect(level.x, level.y, levelwidth, levelheight);
-            context.fillStyle = "#ffffff";
-            context.font = "24px Verdana";
-            drawCenterText("Game Over!", level.x, level.y + levelheight / 2 + 10, levelwidth);
-        }
-    }
-
     function drawFrame() {
         // Draw background and a border
         context.fillStyle = "#d0d0d0";
@@ -227,16 +210,47 @@ window.onload = function() {
         context.fillText(`Fps: ${fps}`, 13, 50);
     }
 
-
+    let scoreX = 30; // Initial score X position
+    let scoreY = 40; // Initial score Y position
+    
+    function render() {
+      drawFrame();
+      context.fillStyle = "#000000";
+      context.font = "24px Verdana";
+      drawCenterText("Score:", scoreX, scoreY, 150);
+      drawCenterText(score.toString(), scoreX, scoreY + 30, 150);
+      drawButtons();
+    
+      const levelwidth = level.columns * level.tilewidth;
+      const levelheight = level.rows * level.tileheight;
+      context.fillStyle = "#000000";
+      context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
+    
+      renderTiles();
+      renderClusters();
+    
+      if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
+          renderMoves();
+      }
+    
+      if (gameover) {
+          context.fillStyle = "rgba(0, 0, 0, 0.8)";
+          context.fillRect(level.x, level.y, levelwidth, levelheight);
+          context.fillStyle = "#ffffff";
+          context.font = "24px Verdana";
+          drawCenterText("Game Over!", level.x, level.y + levelheight / 2 + 10, levelwidth);
+      }
+    }
+    
     function drawButtons() {
-        for (const button of buttons) {
-            context.fillStyle = "#000000";
-            context.fillRect(button.x, button.y, button.width, button.height);
-            context.fillStyle = "#ffffff";
-            context.font = "18px Verdana";
-            const textdim = context.measureText(button.text);
-            context.fillText(button.text, button.x + (button.width - textdim.width) / 2, button.y + 30);
-        }
+      for (const button of buttons) {
+          context.fillStyle = "#000000";
+          context.fillRect(button.x, button.y, button.width, button.height);
+          context.fillStyle = "#ffffff";
+          context.font = "18px Verdana";
+          const textdim = context.measureText(button.text);
+          context.fillText(button.text, button.x + (button.width - textdim.width) / 2, button.y + 30);
+      }
     }
 
     function renderTiles() {
