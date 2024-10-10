@@ -102,26 +102,25 @@ window.onload = function() {
         const dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
         updateFps(dt);
-
+    
         if (gamestate === gamestates.ready) {
             if (moves.length <= 0) {
                 gameover = true;
             }
-
+    
             if (aibot) {
                 animationtime += dt;
                 if (animationtime > animationtimetotal) {
-                    findMoves();
-                    if (moves.length > 0) {
-                        const move = moves[Math.floor(Math.random() * moves.length)];
-                        mouseSwap(move.column1, move.row1, move.column2, move.row2);
+                    const optimalMove = findOptimalMove();
+                    if (optimalMove) {
+                        mouseSwap(optimalMove.column1, optimalMove.row1, optimalMove.column2, optimalMove.row2);
                     }
                     animationtime = 0;
                 }
             }
         } else if (gamestate === gamestates.resolve) {
             animationtime += dt;
-
+    
             if (animationstate === 0) {
                 if (animationtime > animationtimetotal) {
                     findClusters();
@@ -167,11 +166,11 @@ window.onload = function() {
                     gamestate = gamestates.ready;
                 }
             }
-
+    
             findMoves();
             findClusters();
         }
-    }
+    }    
 
     function updateFps(dt: number) {
         if (fpstime > 0.25) {
@@ -620,6 +619,51 @@ window.onload = function() {
 
     init();
     resizeCanvas(); // Initial resize     
+
+    function findOptimalMove() {
+        let bestMove = null;
+        let bestScore = 0;
+    
+        for (let j = 0; j < level.rows; j++) {
+            for (let i = 0; i < level.columns - 1; i++) {
+                // Swap tiles
+                swap(i, j, i + 1, j);
+                // Evaluate the board
+                const score = evaluateBoard();
+                // Swap back
+                swap(i, j, i + 1, j);
+    
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = { column1: i, row1: j, column2: i + 1, row2: j };
+                }
+            }
+        }
+    
+        for (let i = 0; i < level.columns; i++) {
+            for (let j = 0; j < level.rows - 1; j++) {
+                // Swap tiles
+                swap(i, j, i, j + 1);
+                // Evaluate the board
+                const score = evaluateBoard();
+                // Swap back
+                swap(i, j, i, j + 1);
+    
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = { column1: i, row1: j, column2: i, row2: j + 1 };
+                }
+            }
+        }
+    
+        return bestMove;
+    }
+    
+    function evaluateBoard() {
+        // Implement your logic to evaluate the board and return a score
+        // This could involve finding clusters and calculating the potential score
+        return Math.random(); // Placeholder
+    }
 };
 
 interface Tile {
