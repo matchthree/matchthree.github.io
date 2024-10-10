@@ -376,57 +376,72 @@ window.onload = function() {
         }
     }
 
+    function evaluateBoard() {
+        let score = 0;
+        const clusters = findClusters();
+    
+        for (const cluster of clusters) {
+            score += (cluster.length - 2) * 100; // Example scoring: 100 points per tile in the cluster beyond the first two
+        }
+    
+        return score;
+    }
+    
     function findClusters() {
-        clusters = [];
-
+        const clusters: Cluster[] = [];
+    
+        // Horizontal clusters
         for (let j = 0; j < level.rows; j++) {
-            let matchlength = 1;
+            let matchLength = 1;
             for (let i = 0; i < level.columns; i++) {
-                let checkcluster = false;
-
+                let checkCluster = false;
+    
                 if (i === level.columns - 1) {
-                    checkcluster = true;
+                    checkCluster = true;
                 } else {
                     if (level.tiles[i][j].type === level.tiles[i + 1][j].type && level.tiles[i][j].type !== -1) {
-                        matchlength += 1;
+                        matchLength++;
                     } else {
-                        checkcluster = true;
+                        checkCluster = true;
                     }
                 }
-
-                if (checkcluster) {
-                    if (matchlength >= 3) {
-                        clusters.push({ column: i + 1 - matchlength, row: j, length: matchlength, horizontal: true });
+    
+                if (checkCluster) {
+                    if (matchLength >= 3) {
+                        clusters.push({ column: i + 1 - matchLength, row: j, length: matchLength, horizontal: true });
                     }
-                    matchlength = 1;
+                    matchLength = 1;
                 }
             }
         }
-
+    
+        // Vertical clusters
         for (let i = 0; i < level.columns; i++) {
-            let matchlength = 1;
+            let matchLength = 1;
             for (let j = 0; j < level.rows; j++) {
-                let checkcluster = false;
-
+                let checkCluster = false;
+    
                 if (j === level.rows - 1) {
-                    checkcluster = true;
+                    checkCluster = true;
                 } else {
                     if (level.tiles[i][j].type === level.tiles[i][j + 1].type && level.tiles[i][j].type !== -1) {
-                        matchlength += 1;
+                        matchLength++;
                     } else {
-                        checkcluster = true;
+                        checkCluster = true;
                     }
                 }
-
-                if (checkcluster) {
-                    if (matchlength >= 3) {
-                        clusters.push({ column: i, row: j + 1 - matchlength, length: matchlength, horizontal: false });
+    
+                if (checkCluster) {
+                    if (matchLength >= 3) {
+                        clusters.push({ column: i, row: j + 1 - matchLength, length: matchLength, horizontal: false });
                     }
-                    matchlength = 1;
+                    matchLength = 1;
                 }
             }
         }
-    }
+    
+        return clusters;
+    }    
 
     function findMoves() {
         moves = [];
@@ -621,8 +636,8 @@ window.onload = function() {
     resizeCanvas(); // Initial resize     
 
     function findOptimalMove() {
-        let bestMove = null;
-        let bestScore = 0;
+        let bestMove: Move | null = null;
+        let bestScore = -Infinity;
     
         for (let j = 0; j < level.rows; j++) {
             for (let i = 0; i < level.columns - 1; i++) {
@@ -657,12 +672,6 @@ window.onload = function() {
         }
     
         return bestMove;
-    }
-    
-    function evaluateBoard() {
-        // Implement your logic to evaluate the board and return a score
-        // This could involve finding clusters and calculating the potential score
-        return Math.random(); // Placeholder
     }
 };
 
