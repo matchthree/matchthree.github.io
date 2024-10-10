@@ -7,21 +7,21 @@ window.onload = function() {
       canvas.height = window.innerHeight;
   
       // Adjust level dimensions and tile size
-      level.x = canvas.width * 0.1;
-      level.y = canvas.height * 0.1;
+      level.x = canvas.width * 0.05;
+      level.y = canvas.height * 0.22;
       level.tilewidth = (canvas.width * 0.8) / level.columns;
-      level.tileheight = (canvas.height * 0.8) / level.rows;
+      level.tileheight = (canvas.height * 0.65) / level.rows;
   
       // Adjust button positions
       buttons[0].x = canvas.width * 0.05;
-      buttons[0].y = canvas.height * 0.05;
+      buttons[0].y = canvas.height * 0.06;
       buttons[1].x = canvas.width * 0.05;
-      buttons[1].y = canvas.height * 0.1;
+      buttons[1].y = canvas.height * 0.11;
       buttons[2].x = canvas.width * 0.05;
-      buttons[2].y = canvas.height * 0.15;
+      buttons[2].y = canvas.height * 0.16;
   
       // Adjust score position
-      scoreX = canvas.width * 0.05;
+      scoreX = canvas.width * 0.2;
       scoreY = canvas.height * 0.02;
     }
   
@@ -202,7 +202,7 @@ window.onload = function() {
         // Draw title
         context.fillStyle = "#ffffff";
         context.font = "24px Verdana";
-        context.fillText("Match3 Example - Rembound.com", 10, 30);
+        context.fillText("match", 10, 30);
 
         // Display fps
         context.fillStyle = "#ffffff";
