@@ -687,17 +687,17 @@ interface Tile {
   }
   
   interface Level {
-    x: number;
-    y: number;
-    columns: number;
-    rows: number;
-    tilewidth: number;
-    tileheight: number;
-    tiles: Tile[][];
-    selectedtile: SelectedTile;
+      columns: number;
+      rows: number;
+      selectedtile: SelectedTile;
+      tileheight: number;
+      tiles: Tile[][];
+      tilewidth: number;
+      x: number;
+      y: number;
   }
-  
-  interface Move {
+
+interface Move {
     column1: number;
     row1: number;
     column2: number;
