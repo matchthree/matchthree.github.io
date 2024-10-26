@@ -1,32 +1,32 @@
 window.onload = function() {
     const canvas = document.getElementById("viewport") as HTMLCanvasElement;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-  
+
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-  
-      // Adjust level dimensions and tile size
-      level.x = canvas.width * 0.05;
-      level.y = canvas.height * 0.22;
-      level.tilewidth = (canvas.width * 0.8) / level.columns;
-      level.tileheight = (canvas.height * 0.65) / level.rows;
-  
-      // Adjust button positions
-      buttons[0].x = canvas.width * 0.05;
-      buttons[0].y = canvas.height * 0.06;
-      buttons[1].x = canvas.width * 0.05;
-      buttons[1].y = canvas.height * 0.11;
-      buttons[2].x = canvas.width * 0.05;
-      buttons[2].y = canvas.height * 0.16;
-  
-      // Adjust score position
-      scoreX = canvas.width * 0.2;
-      scoreY = canvas.height * 0.02;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Adjust level dimensions and tile size
+        level.x = canvas.width * 0.05;
+        level.y = canvas.height * 0.22;
+        level.tilewidth = (canvas.width * 0.8) / level.columns;
+        level.tileheight = (canvas.height * 0.65) / level.rows;
+
+        // Adjust button positions
+        buttons[0].x = canvas.width * 0.05;
+        buttons[0].y = canvas.height * 0.06;
+        buttons[1].x = canvas.width * 0.05;
+        buttons[1].y = canvas.height * 0.11;
+        buttons[2].x = canvas.width * 0.05;
+        buttons[2].y = canvas.height * 0.16;
+
+        // Adjust score position
+        scoreX = canvas.width * 0.2;
+        scoreY = canvas.height * 0.02;
     }
-  
+
     window.addEventListener('resize', resizeCanvas);
-  
+
     let lastframe = 0;
     let fpstime = 0;
     let framecount = 0;
@@ -102,12 +102,12 @@ window.onload = function() {
         const dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
         updateFps(dt);
-    
+
         if (gamestate === gamestates.ready) {
             if (moves.length <= 0) {
                 gameover = true;
             }
-    
+
             if (aibot) {
                 animationtime += dt;
                 if (animationtime > animationtimetotal) {
@@ -120,7 +120,7 @@ window.onload = function() {
             }
         } else if (gamestate === gamestates.resolve) {
             animationtime += dt;
-    
+
             if (animationstate === 0) {
                 if (animationtime > animationtimetotal) {
                     findClusters();
@@ -166,11 +166,11 @@ window.onload = function() {
                     gamestate = gamestates.ready;
                 }
             }
-    
+
             findMoves();
             findClusters();
         }
-    }    
+    }
 
     function updateFps(dt: number) {
         if (fpstime > 0.25) {
@@ -211,45 +211,45 @@ window.onload = function() {
 
     let scoreX = 30; // Initial score X position
     let scoreY = 40; // Initial score Y position
-    
+
     function render() {
-      drawFrame();
-      context.fillStyle = "#000000";
-      context.font = "24px Verdana";
-      drawCenterText("Score:", scoreX, scoreY, 150);
-      drawCenterText(score.toString(), scoreX, scoreY + 30, 150);
-      drawButtons();
-    
-      const levelwidth = level.columns * level.tilewidth;
-      const levelheight = level.rows * level.tileheight;
-      context.fillStyle = "#000000";
-      context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
-    
-      renderTiles();
-      renderClusters();
-    
-      if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
-          renderMoves();
-      }
-    
-      if (gameover) {
-          context.fillStyle = "rgba(0, 0, 0, 0.8)";
-          context.fillRect(level.x, level.y, levelwidth, levelheight);
-          context.fillStyle = "#ffffff";
-          context.font = "24px Verdana";
-          drawCenterText("Game Over!", level.x, level.y + levelheight / 2 + 10, levelwidth);
-      }
+        drawFrame();
+        context.fillStyle = "#000000";
+        context.font = "24px Verdana";
+        drawCenterText("Score:", scoreX, scoreY, 150);
+        drawCenterText(score.toString(), scoreX, scoreY + 30, 150);
+        drawButtons();
+
+        const levelwidth = level.columns * level.tilewidth;
+        const levelheight = level.rows * level.tileheight;
+        context.fillStyle = "#000000";
+        context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
+
+        renderTiles();
+        renderClusters();
+
+        if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
+            renderMoves();
+        }
+
+        if (gameover) {
+            context.fillStyle = "rgba(0, 0, 0, 0.8)";
+            context.fillRect(level.x, level.y, levelwidth, levelheight);
+            context.fillStyle = "#ffffff";
+            context.font = "24px Verdana";
+            drawCenterText("Game Over!", level.x, level.y + levelheight / 2 + 10, levelwidth);
+        }
     }
-    
+
     function drawButtons() {
-      for (const button of buttons) {
-          context.fillStyle = "#000000";
-          context.fillRect(button.x, button.y, button.width, button.height);
-          context.fillStyle = "#ffffff";
-          context.font = "18px Verdana";
-          const textdim = context.measureText(button.text);
-          context.fillText(button.text, button.x + (button.width - textdim.width) / 2, button.y + 30);
-      }
+        for (const button of buttons) {
+            context.fillStyle = "#000000";
+            context.fillRect(button.x, button.y, button.width, button.height);
+            context.fillStyle = "#ffffff";
+            context.font = "18px Verdana";
+            const textdim = context.measureText(button.text);
+            context.fillText(button.text, button.x + (button.width - textdim.width) / 2, button.y + 30);
+        }
     }
 
     function renderTiles() {
@@ -376,72 +376,57 @@ window.onload = function() {
         }
     }
 
-    function evaluateBoard() {
-        let score = 0;
-        const clusters = findClusters();
-    
-        for (const cluster of clusters) {
-            score += (cluster.length - 2) * 100; // Example scoring: 100 points per tile in the cluster beyond the first two
-        }
-    
-        return score;
-    }
-    
     function findClusters() {
-        const clusters: Cluster[] = [];
-    
-        // Horizontal clusters
+        clusters = [];
+
         for (let j = 0; j < level.rows; j++) {
-            let matchLength = 1;
+            let matchlength = 1;
             for (let i = 0; i < level.columns; i++) {
-                let checkCluster = false;
-    
+                let checkcluster = false;
+
                 if (i === level.columns - 1) {
-                    checkCluster = true;
+                    checkcluster = true;
                 } else {
                     if (level.tiles[i][j].type === level.tiles[i + 1][j].type && level.tiles[i][j].type !== -1) {
-                        matchLength++;
+                        matchlength += 1;
                     } else {
-                        checkCluster = true;
+                        checkcluster = true;
                     }
                 }
-    
-                if (checkCluster) {
-                    if (matchLength >= 3) {
-                        clusters.push({ column: i + 1 - matchLength, row: j, length: matchLength, horizontal: true });
+
+                if (checkcluster) {
+                    if (matchlength >= 3) {
+                        clusters.push({ column: i + 1 - matchlength, row: j, length: matchlength, horizontal: true });
                     }
-                    matchLength = 1;
+                    matchlength = 1;
                 }
             }
         }
-    
-        // Vertical clusters
+
         for (let i = 0; i < level.columns; i++) {
-            let matchLength = 1;
+            let matchlength = 1;
             for (let j = 0; j < level.rows; j++) {
-                let checkCluster = false;
-    
+                let checkcluster = false;
+
                 if (j === level.rows - 1) {
-                    checkCluster = true;
+                    checkcluster = true;
                 } else {
                     if (level.tiles[i][j].type === level.tiles[i][j + 1].type && level.tiles[i][j].type !== -1) {
-                        matchLength++;
+                        matchlength += 1;
                     } else {
-                        checkCluster = true;
+                        checkcluster = true;
                     }
                 }
-    
-                if (checkCluster) {
-                    if (matchLength >= 3) {
-                        clusters.push({ column: i, row: j + 1 - matchLength, length: matchLength, horizontal: false });
+
+                if (checkcluster) {
+                    if (matchlength >= 3) {
+                        clusters.push({ column: i, row: j + 1 - matchlength, length: matchlength, horizontal: false });
                     }
-                    matchLength = 1;
+                    matchlength = 1;
                 }
             }
         }
-    
-        return clusters;
-    }    
+    }
 
     function findMoves() {
         moves = [];
@@ -633,12 +618,12 @@ window.onload = function() {
     }
 
     init();
-    resizeCanvas(); // Initial resize     
+    resizeCanvas(); // Initial resize
 
     function findOptimalMove() {
-        let bestMove: Move | null = null;
-        let bestScore = -Infinity;
-    
+        let bestMove = null;
+        let bestScore = 0;
+
         for (let j = 0; j < level.rows; j++) {
             for (let i = 0; i < level.columns - 1; i++) {
                 // Swap tiles
@@ -647,14 +632,14 @@ window.onload = function() {
                 const score = evaluateBoard();
                 // Swap back
                 swap(i, j, i + 1, j);
-    
+
                 if (score > bestScore) {
                     bestScore = score;
                     bestMove = { column1: i, row1: j, column2: i + 1, row2: j };
                 }
             }
         }
-    
+
         for (let i = 0; i < level.columns; i++) {
             for (let j = 0; j < level.rows - 1; j++) {
                 // Swap tiles
@@ -663,59 +648,64 @@ window.onload = function() {
                 const score = evaluateBoard();
                 // Swap back
                 swap(i, j, i, j + 1);
-    
+
                 if (score > bestScore) {
                     bestScore = score;
                     bestMove = { column1: i, row1: j, column2: i, row2: j + 1 };
                 }
             }
         }
-    
+
         return bestMove;
+    }
+
+    function evaluateBoard() {
+        // Implement your logic to evaluate the board and return a score
+        // This could involve finding clusters and calculating the potential score
+        return Math.random(); // Placeholder
     }
 };
 
 interface Tile {
     type: number;
     shift: number;
-  }
-  
-  interface SelectedTile {
+}
+
+interface SelectedTile {
     selected: boolean;
     column: number;
     row: number;
-  }
-  
-  interface Level {
-      columns: number;
-      rows: number;
-      selectedtile: SelectedTile;
-      tileheight: number;
-      tiles: Tile[][];
-      tilewidth: number;
-      x: number;
-      y: number;
-  }
+}
+
+interface Level {
+    x: number;
+    y: number;
+    columns: number;
+    rows: number;
+    tilewidth: number;
+    tileheight: number;
+    tiles: Tile[][];
+    selectedtile: SelectedTile;
+}
 
 interface Move {
     column1: number;
     row1: number;
     column2: number;
     row2: number;
-  }
-  
-  interface Cluster {
+}
+
+interface Cluster {
     column: number;
     row: number;
     length: number;
     horizontal: boolean;
-  }
-  
-  interface Button {
+}
+
+interface Button {
     x: number;
     y: number;
     width: number;
     height: number;
     text: string;
-  }
-  
+}
