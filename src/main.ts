@@ -787,6 +787,7 @@ window.onload = function() {
         var pos = getMousePos(canvas, e);
 
         // Start dragging
+        let mt;
         if (!drag) {
             // Get the tile under the mouse
             mt = getMouseTile(pos);
@@ -800,7 +801,7 @@ window.onload = function() {
                         level.selectedtile.selected = false;
                         drag = true;
                         return;
-                    } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)){
+                    } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
                         // Tiles can be swapped, swap the tiles
                         mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
                         swapped = true;
