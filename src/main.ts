@@ -116,7 +116,7 @@ window.onload = function() {
     }
 
     // Main loop
-    function main(tframe) {
+    function main(tframe: number) {
         // Request animation frames
         window.requestAnimationFrame(main);
 
@@ -126,14 +126,14 @@ window.onload = function() {
     }
 
     // Update the game state
-    function update(tframe) {
+    function update(tframe: number) {
         let dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
 
         // Update the fps counter
         updateFps(dt);
 
-        if (gamestate == gamestates.ready) {
+        if (gamestate === gamestates.ready) {
             // Game is ready for player input
 
             // Check for game over
@@ -161,11 +161,11 @@ window.onload = function() {
                     animationtime = 0;
                 }
             }
-        } else if (gamestate == gamestates.resolve) {
+        } else if (gamestate === gamestates.resolve) {
             // Game is busy resolving and animating clusters
             animationtime += dt;
 
-            if (animationstate == 0) {
+            if (animationstate === 0) {
                 // Clusters need to be found and removed
                 if (animationtime > animationtimetotal) {
                     // Find clusters
@@ -189,7 +189,7 @@ window.onload = function() {
                     }
                     animationtime = 0;
                 }
-            } else if (animationstate == 1) {
+            } else if (animationstate === 1) {
                 // Tiles need to be shifted
                 if (animationtime > animationtimetotal) {
                     // Shift tiles
@@ -206,7 +206,7 @@ window.onload = function() {
                         gamestate = gamestates.ready;
                     }
                 }
-            } else if (animationstate == 2) {
+            } else if (animationstate === 2) {
                 // Swapping tiles animation
                 if (animationtime > animationtimetotal) {
                     // Swap the tiles
@@ -230,7 +230,7 @@ window.onload = function() {
                     findMoves();
                     findClusters();
                 }
-            } else if (animationstate == 3) {
+            } else if (animationstate === 3) {
                 // Rewind swapping animation
                 if (animationtime > animationtimetotal) {
                     // Invalid swap, swap back
@@ -295,7 +295,7 @@ window.onload = function() {
         renderClusters();
 
         // Render moves, when there are no clusters
-        if (showmoves && clusters.length <= 0 && gamestate == gamestates.ready) {
+        if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
             renderMoves();
         }
 
@@ -369,7 +369,7 @@ window.onload = function() {
 
                 // Draw the selected tile
                 if (level.selectedtile.selected) {
-                    if (level.selectedtile.column == i && level.selectedtile.row == j) {
+                    if (level.selectedtile.column === i && level.selectedtile.row === j) {
                         // Draw a red tile
                         drawTile(coord.tilex, coord.tiley, 255, 0, 0);
                     }
@@ -378,7 +378,7 @@ window.onload = function() {
         }
 
         // Render the swap animation
-        if (gamestate == gamestates.resolve && (animationstate == 2 || animationstate == 3)) {
+        if (gamestate === gamestates.resolve && (animationstate === 2 || animationstate === 3)) {
             // Calculate the x and y shift
             let shiftx = currentmove.column2 - currentmove.column1;
             let shifty = currentmove.row2 - currentmove.row1;
@@ -398,7 +398,7 @@ window.onload = function() {
             drawTile(coord2.tilex, coord2.tiley, 0, 0, 0);
 
             // Change the order, depending on the animation state
-            if (animationstate == 2) {
+            if (animationstate === 2) {
                 // Draw the tiles
                 drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
                 drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
@@ -539,13 +539,13 @@ window.onload = function() {
             for (let i=0; i<level.columns; i++) {
                 let checkcluster = false;
 
-                if (i == level.columns-1) {
+                if (i === level.columns-1) {
                     // Last tile
                     checkcluster = true;
                 } else {
                     // Check the type of the next tile
-                    if (level.tiles[i][j].type == level.tiles[i+1][j].type &&
-                        level.tiles[i][j].type != -1) {
+                    if (level.tiles[i][j].type === level.tiles[i+1][j].type &&
+                        level.tiles[i][j].type !== -1) {
                         // Same type as the previous tile, increase matchlength
                         matchlength += 1;
                     } else {
@@ -574,13 +574,13 @@ window.onload = function() {
             for (let j=0; j<level.rows; j++) {
                 let checkcluster = false;
 
-                if (j == level.rows-1) {
+                if (j === level.rows-1) {
                     // Last tile
                     checkcluster = true;
                 } else {
                     // Check the type of the next tile
-                    if (level.tiles[i][j].type == level.tiles[i][j+1].type &&
-                        level.tiles[i][j].type != -1) {
+                    if (level.tiles[i][j].type === level.tiles[i][j+1].type &&
+                        level.tiles[i][j].type !== -1) {
                         // Same type as the previous tile, increase matchlength
                         matchlength += 1;
                     } else {
@@ -673,7 +673,7 @@ window.onload = function() {
             let shift = 0;
             for (let j=level.rows-1; j>=0; j--) {
                 // Loop from bottom to top
-                if (level.tiles[i][j].type == -1) {
+                if (level.tiles[i][j].type === -1) {
                     // Tile is removed, increase shift
                     shift++;
                     level.tiles[i][j].shift = 0;
@@ -691,7 +691,7 @@ window.onload = function() {
         for (let i=0; i<level.columns; i++) {
             for (let j=level.rows-1; j>=0; j--) {
                 // Loop from bottom to top
-                if (level.tiles[i][j].type == -1) {
+                if (level.tiles[i][j].type === -1) {
                     // Insert new random tile
                     level.tiles[i][j].type = getRandomTile();
                 } else {
@@ -735,8 +735,8 @@ window.onload = function() {
     // Check if two tiles can be swapped
     function canSwap(x1, y1, x2, y2) {
         // Check if the tile is a direct neighbor of the selected tile
-        if ((Math.abs(x1 - x2) == 1 && y1 == y2) ||
-            (Math.abs(y1 - y2) == 1 && x1 == x2)) {
+        if ((Math.abs(x1 - x2) === 1 && y1 === y2) ||
+            (Math.abs(y1 - y2) === 1 && x1 === x2)) {
             return true;
         }
 
@@ -800,7 +800,7 @@ window.onload = function() {
                 // Valid tile
                 let swapped = false;
                 if (level.selectedtile.selected) {
-                    if (mt.x == level.selectedtile.column && mt.y == level.selectedtile.row) {
+                    if (mt.x === level.selectedtile.column && mt.y === level.selectedtile.row) {
                         // Same tile selected, deselect
                         level.selectedtile.selected = false;
                         drag = true;
@@ -833,14 +833,14 @@ window.onload = function() {
                 pos.y >= buttons[i].y && pos.y < buttons[i].y+buttons[i].height) {
 
                 // Button i was clicked
-                if (i == 0) {
+                if (i === 0) {
                     // New Game
                     newGame();
-                } else if (i == 1) {
+                } else if (i === 1) {
                     // Show Moves
                     showmoves = !showmoves;
                     buttons[i].text = (showmoves?"Hide":"Show") + " Moves";
-                } else if (i == 2) {
+                } else if (i === 2) {
                     // AI Bot
                     aibot = !aibot;
                     buttons[i].text = (aibot?"Disable":"Enable") + " AI Bot";
