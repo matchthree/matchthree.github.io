@@ -38,3 +38,11 @@ export interface Button {
     height: number;
     text: string;
 }
+
+export interface Position {
+    x: number;
+    y: number;
+    valid?: boolean;
+}
+
+export type ClusterFunction = (index: number, column: number, row: number, cluster: Cluster) => void;
