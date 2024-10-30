@@ -1,4 +1,5 @@
 import {SayHelloWorld} from "./sayHelloWorld.ts";
+import {Cluster, createTile, Move} from "./types.ts";
 
 // ------------------------------------------------------------------------
 // How To Make A Match-3 Game With HTML5 Canvas
@@ -46,7 +47,7 @@ window.onload = function() {
         tilewidth: 40,  // Visual width of a tile
         tileheight: 40, // Visual height of a tile
         tiles: [],      // The two-dimensional tile array
-        selectedtile: { selected: false, column: 0, row: 0 }
+        selectedtile: createTile(0, 0, false) // { selected: false, column: 0, row: 0 }
     };
 
     // All of the different tile colors in RGB
@@ -59,8 +60,8 @@ window.onload = function() {
         [255, 255, 255]];
 
     // Clusters and moves that were found
-    let clusters = [];  // { column, row, length, horizontal }
-    let moves = [];     // { column1, row1, column2, row2 }
+    let clusters: Cluster[] = [];  // { column, row, length, horizontal }
+    let moves: Move[] = [];     // { column1, row1, column2, row2 }
 
     // Current move
     let currentmove = { column1: 0, row1: 0, column2: 0, row2: 0 };
@@ -175,7 +176,7 @@ window.onload = function() {
                         // Add points to the score
                         for (let i=0; i<clusters.length; i++) {
                             // Add extra points for longer clusters
-                            score += 100 * (clusters[i].length - 2);;
+                            score += 100 * (clusters[i].length - 2);
                         }
 
                         // Clusters found, remove them
@@ -666,7 +667,11 @@ window.onload = function() {
     // Remove the clusters
     function removeClusters() {
         // Change the type of the tiles to -1, indicating a removed tile
-        loopClusters(function(index, column, row, cluster) { level.tiles[column][row].type = -1; });
+        loopClusters(function(index, column, row, cluster) {
+            console.info("hello, cluster");
+            console.info({ cluster });
+            level.tiles[column][row].type = -1;
+        });
 
         // Calculate how much a tile should be shifted downwards
         for (let i=0; i<level.columns; i++) {
@@ -765,14 +770,14 @@ window.onload = function() {
     }
 
     // On mouse movement
-    function onMouseMove(e) {
+    function onMouseMove(e: MouseEvent) {
         // Get the mouse position
         let pos = getMousePos(canvas, e);
 
         // Check if we are dragging with a tile selected
         if (drag && level.selectedtile.selected) {
             // Get the tile under the mouse
-            mt = getMouseTile(pos);
+            let mt = getMouseTile(pos);
             if (mt.valid) {
                 // Valid tile
 
@@ -786,7 +791,7 @@ window.onload = function() {
     }
 
     // On mouse button click
-    function onMouseDown(e) {
+    function onMouseDown(e: MouseEvent) {
         // Get the mouse position
         let pos = getMousePos(canvas, e);
 
@@ -849,18 +854,22 @@ window.onload = function() {
         }
     }
 
-    function onMouseUp(e) {
+    function onMouseUp(e: MouseEvent) {
         // Reset dragging
+        console.info(`onMouseUp()`)
+        console.info({ e });
         drag = false;
     }
 
-    function onMouseOut(e) {
+    function onMouseOut(e: MouseEvent) {
         // Reset dragging
+        console.info(`onMouseOut()`);
+        console.info({ e });
         drag = false;
     }
 
     // Get the mouse position
-    function getMousePos(canvas, e) {
+    function getMousePos(canvas: HTMLCanvasElement, e: MouseEvent) {
         let rect = canvas.getBoundingClientRect();
         return {
             x: Math.round((e.clientX - rect.left)/(rect.right - rect.left)*canvas.width),
