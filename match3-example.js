@@ -21,20 +21,20 @@
 // The function gets called when the window is fully loaded
 window.onload = function() {
     // Get the canvas and context
-    const canvas = document.getElementById("viewport");
-    const context = canvas.getContext("2d");
-
+    var canvas = document.getElementById("viewport");
+    var context = canvas.getContext("2d");
+    
     // Timing and frames per second
-    let lastframe = 0;
-    let fpstime = 0;
-    let framecount = 0;
-    let fps = 0;
-
+    var lastframe = 0;
+    var fpstime = 0;
+    var framecount = 0;
+    var fps = 0;
+    
     // Mouse dragging
-    let drag = false;
-
+    var drag = false;
+    
     // Level object
-    const level = {
+    var level = {
         x: 250,         // X position
         y: 113,         // Y position
         columns: 8,     // Number of tile columns
@@ -42,51 +42,51 @@ window.onload = function() {
         tilewidth: 40,  // Visual width of a tile
         tileheight: 40, // Visual height of a tile
         tiles: [],      // The two-dimensional tile array
-        selectedtile: {selected: false, column: 0, row: 0}
+        selectedtile: { selected: false, column: 0, row: 0 }
     };
-
+    
     // All of the different tile colors in RGB
-    const tilecolors = [[255, 128, 128],
-        [128, 255, 128],
-        [128, 128, 255],
-        [255, 255, 128],
-        [255, 128, 255],
-        [128, 255, 255],
-        [255, 255, 255]];
-
+    var tilecolors = [[255, 128, 128],
+                      [128, 255, 128],
+                      [128, 128, 255],
+                      [255, 255, 128],
+                      [255, 128, 255],
+                      [128, 255, 255],
+                      [255, 255, 255]];
+    
     // Clusters and moves that were found
-    let clusters = [];  // { column, row, length, horizontal }
-    let moves = [];     // { column1, row1, column2, row2 }
+    var clusters = [];  // { column, row, length, horizontal }
+    var moves = [];     // { column1, row1, column2, row2 }
 
     // Current move
-    let currentmove = {column1: 0, row1: 0, column2: 0, row2: 0};
-
+    var currentmove = { column1: 0, row1: 0, column2: 0, row2: 0 };
+    
     // Game states
-    const gamestates = {init: 0, ready: 1, resolve: 2};
-    let gamestate = gamestates.init;
-
+    var gamestates = { init: 0, ready: 1, resolve: 2 };
+    var gamestate = gamestates.init;
+    
     // Score
-    let score = 0;
-
+    var score = 0;
+    
     // Animation variables
-    let animationstate = 0;
-    let animationtime = 0;
-    const animationtimetotal = 0.3;
-
+    var animationstate = 0;
+    var animationtime = 0;
+    var animationtimetotal = 0.3;
+    
     // Show available moves
-    let showmoves = false;
-
+    var showmoves = false;
+    
     // The AI bot
-    let aibot = false;
-
+    var aibot = false;
+    
     // Game Over
-    let gameover = false;
-
+    var gameover = false;
+    
     // Gui buttons
-    const buttons = [{x: 30, y: 240, width: 150, height: 50, text: "New Game"},
-        {x: 30, y: 300, width: 150, height: 50, text: "Show Moves"},
-        {x: 30, y: 360, width: 150, height: 50, text: "Enable AI Bot"}];
-
+    var buttons = [ { x: 30, y: 240, width: 150, height: 50, text: "New Game"},
+                    { x: 30, y: 300, width: 150, height: 50, text: "Show Moves"},
+                    { x: 30, y: 360, width: 150, height: 50, text: "Enable AI Bot"}];
+    
     // Initialize the game
     function init() {
         // Add mouse events
@@ -96,9 +96,9 @@ window.onload = function() {
         canvas.addEventListener("mouseout", onMouseOut);
         
         // Initialize the two-dimensional tile array
-        for (let i=0; i<level.columns; i++) {
+        for (var i=0; i<level.columns; i++) {
             level.tiles[i] = [];
-            for (let j=0; j<level.rows; j++) {
+            for (var j=0; j<level.rows; j++) {
                 // Define a tile type and a shift parameter for animation
                 level.tiles[i][j] = { type: 0, shift:0 }
             }
@@ -123,13 +123,13 @@ window.onload = function() {
     
     // Update the game state
     function update(tframe) {
-        const dt = (tframe - lastframe) / 1000;
+        var dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
         
         // Update the fps counter
         updateFps(dt);
         
-        if (gamestate === gamestates.ready) {
+        if (gamestate == gamestates.ready) {
             // Game is ready for player input
             
             // Check for game over
@@ -146,8 +146,8 @@ window.onload = function() {
                     
                     if (moves.length > 0) {
                         // Get a random valid move
-                        const move = moves[Math.floor(Math.random() * moves.length)];
-
+                        var move = moves[Math.floor(Math.random() * moves.length)];
+                        
                         // Simulate a player using the mouse to swap two tiles
                         mouseSwap(move.column1, move.row1, move.column2, move.row2);
                     } else {
@@ -157,11 +157,11 @@ window.onload = function() {
                     animationtime = 0;
                 }
             }
-        } else if (gamestate === gamestates.resolve) {
+        } else if (gamestate == gamestates.resolve) {
             // Game is busy resolving and animating clusters
             animationtime += dt;
             
-            if (animationstate === 0) {
+            if (animationstate == 0) {
                 // Clusters need to be found and removed
                 if (animationtime > animationtimetotal) {
                     // Find clusters
@@ -169,9 +169,9 @@ window.onload = function() {
                     
                     if (clusters.length > 0) {
                         // Add points to the score
-                        for (let i=0; i<clusters.length; i++) {
+                        for (var i=0; i<clusters.length; i++) {
                             // Add extra points for longer clusters
-                            score += 100 * (clusters[i].length - 2);
+                            score += 100 * (clusters[i].length - 2);;
                         }
                     
                         // Clusters found, remove them
@@ -185,7 +185,7 @@ window.onload = function() {
                     }
                     animationtime = 0;
                 }
-            } else if (animationstate === 1) {
+            } else if (animationstate == 1) {
                 // Tiles need to be shifted
                 if (animationtime > animationtimetotal) {
                     // Shift tiles
@@ -202,7 +202,7 @@ window.onload = function() {
                         gamestate = gamestates.ready;
                     }
                 }
-            } else if (animationstate === 2) {
+            } else if (animationstate == 2) {
                 // Swapping tiles animation
                 if (animationtime > animationtimetotal) {
                     // Swap the tiles
@@ -226,7 +226,7 @@ window.onload = function() {
                     findMoves();
                     findClusters();
                 }
-            } else if (animationstate === 3) {
+            } else if (animationstate == 3) {
                 // Rewind swapping animation
                 if (animationtime > animationtimetotal) {
                     // Invalid swap, swap back
@@ -260,7 +260,7 @@ window.onload = function() {
     
     // Draw text that is centered
     function drawCenterText(text, x, y, width) {
-        const textdim = context.measureText(text);
+        var textdim = context.measureText(text);
         context.fillText(text, x + (width-textdim.width)/2, y);
     }
     
@@ -279,8 +279,8 @@ window.onload = function() {
         drawButtons();
         
         // Draw level background
-        const levelwidth = level.columns * level.tilewidth;
-        const levelheight = level.rows * level.tileheight;
+        var levelwidth = level.columns * level.tilewidth;
+        var levelheight = level.rows * level.tileheight;
         context.fillStyle = "#000000";
         context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
         
@@ -291,7 +291,7 @@ window.onload = function() {
         renderClusters();
         
         // Render moves, when there are no clusters
-        if (showmoves && clusters.length <= 0 && gamestate === gamestates.ready) {
+        if (showmoves && clusters.length <= 0 && gamestate == gamestates.ready) {
             renderMoves();
         }
         
@@ -331,7 +331,7 @@ window.onload = function() {
     
     // Draw buttons
     function drawButtons() {
-        for (let i=0; i<buttons.length; i++) {
+        for (var i=0; i<buttons.length; i++) {
             // Draw button shape
             context.fillStyle = "#000000";
             context.fillRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height);
@@ -339,33 +339,33 @@ window.onload = function() {
             // Draw button text
             context.fillStyle = "#ffffff";
             context.font = "18px Verdana";
-            const textdim = context.measureText(buttons[i].text);
+            var textdim = context.measureText(buttons[i].text);
             context.fillText(buttons[i].text, buttons[i].x + (buttons[i].width-textdim.width)/2, buttons[i].y+30);
         }
     }
     
     // Render tiles
     function renderTiles() {
-        for (let i=0; i<level.columns; i++) {
-            for (let j=0; j<level.rows; j++) {
+        for (var i=0; i<level.columns; i++) {
+            for (var j=0; j<level.rows; j++) {
                 // Get the shift of the tile for animation
-                const shift = level.tiles[i][j].shift;
-
+                var shift = level.tiles[i][j].shift;
+                
                 // Calculate the tile coordinates
-                const coord = getTileCoordinate(i, j, 0, (animationtime / animationtimetotal) * shift);
-
+                var coord = getTileCoordinate(i, j, 0, (animationtime / animationtimetotal) * shift);
+                
                 // Check if there is a tile present
                 if (level.tiles[i][j].type >= 0) {
                     // Get the color of the tile
-                    const col = tilecolors[level.tiles[i][j].type];
-
+                    var col = tilecolors[level.tiles[i][j].type];
+                    
                     // Draw the tile using the color
                     drawTile(coord.tilex, coord.tiley, col[0], col[1], col[2]);
                 }
                 
                 // Draw the selected tile
                 if (level.selectedtile.selected) {
-                    if (level.selectedtile.column === i && level.selectedtile.row === j) {
+                    if (level.selectedtile.column == i && level.selectedtile.row == j) {
                         // Draw a red tile
                         drawTile(coord.tilex, coord.tiley, 255, 0, 0);
                     }
@@ -374,27 +374,27 @@ window.onload = function() {
         }
         
         // Render the swap animation
-        if (gamestate === gamestates.resolve && (animationstate === 2 || animationstate === 3)) {
+        if (gamestate == gamestates.resolve && (animationstate == 2 || animationstate == 3)) {
             // Calculate the x and y shift
-            const shiftx = currentmove.column2 - currentmove.column1;
-            const shifty = currentmove.row2 - currentmove.row1;
+            var shiftx = currentmove.column2 - currentmove.column1;
+            var shifty = currentmove.row2 - currentmove.row1;
 
             // First tile
-            const coord1 = getTileCoordinate(currentmove.column1, currentmove.row1, 0, 0);
-            const coord1shift = getTileCoordinate(currentmove.column1, currentmove.row1, (animationtime / animationtimetotal) * shiftx, (animationtime / animationtimetotal) * shifty);
-            const col1 = tilecolors[level.tiles[currentmove.column1][currentmove.row1].type];
-
+            var coord1 = getTileCoordinate(currentmove.column1, currentmove.row1, 0, 0);
+            var coord1shift = getTileCoordinate(currentmove.column1, currentmove.row1, (animationtime / animationtimetotal) * shiftx, (animationtime / animationtimetotal) * shifty);
+            var col1 = tilecolors[level.tiles[currentmove.column1][currentmove.row1].type];
+            
             // Second tile
-            const coord2 = getTileCoordinate(currentmove.column2, currentmove.row2, 0, 0);
-            const coord2shift = getTileCoordinate(currentmove.column2, currentmove.row2, (animationtime / animationtimetotal) * -shiftx, (animationtime / animationtimetotal) * -shifty);
-            const col2 = tilecolors[level.tiles[currentmove.column2][currentmove.row2].type];
-
+            var coord2 = getTileCoordinate(currentmove.column2, currentmove.row2, 0, 0);
+            var coord2shift = getTileCoordinate(currentmove.column2, currentmove.row2, (animationtime / animationtimetotal) * -shiftx, (animationtime / animationtimetotal) * -shifty);
+            var col2 = tilecolors[level.tiles[currentmove.column2][currentmove.row2].type];
+            
             // Draw a black background
             drawTile(coord1.tilex, coord1.tiley, 0, 0, 0);
             drawTile(coord2.tilex, coord2.tiley, 0, 0, 0);
             
             // Change the order, depending on the animation state
-            if (animationstate === 2) {
+            if (animationstate == 2) {
                 // Draw the tiles
                 drawTile(coord1shift.tilex, coord1shift.tiley, col1[0], col1[1], col1[2]);
                 drawTile(coord2shift.tilex, coord2shift.tiley, col2[0], col2[1], col2[2]);
@@ -408,8 +408,8 @@ window.onload = function() {
     
     // Get the tile coordinate
     function getTileCoordinate(column, row, columnoffset, rowoffset) {
-        const tilex = level.x + (column + columnoffset) * level.tilewidth;
-        const tiley = level.y + (row + rowoffset) * level.tileheight;
+        var tilex = level.x + (column + columnoffset) * level.tilewidth;
+        var tiley = level.y + (row + rowoffset) * level.tileheight;
         return { tilex: tilex, tiley: tiley};
     }
     
@@ -421,10 +421,10 @@ window.onload = function() {
     
     // Render clusters
     function renderClusters() {
-        for (let i=0; i<clusters.length; i++) {
+        for (var i=0; i<clusters.length; i++) {
             // Calculate the tile coordinates
-            const coord = getTileCoordinate(clusters[i].column, clusters[i].row, 0, 0);
-
+            var coord = getTileCoordinate(clusters[i].column, clusters[i].row, 0, 0);
+            
             if (clusters[i].horizontal) {
                 // Draw a horizontal line
                 context.fillStyle = "#00ff00";
@@ -439,11 +439,11 @@ window.onload = function() {
     
     // Render moves
     function renderMoves() {
-        for (let i=0; i<moves.length; i++) {
+        for (var i=0; i<moves.length; i++) {
             // Calculate coordinates of tile 1 and 2
-            const coord1 = getTileCoordinate(moves[i].column1, moves[i].row1, 0, 0);
-            const coord2 = getTileCoordinate(moves[i].column2, moves[i].row2, 0, 0);
-
+            var coord1 = getTileCoordinate(moves[i].column1, moves[i].row1, 0, 0);
+            var coord2 = getTileCoordinate(moves[i].column2, moves[i].row2, 0, 0);
+            
             // Draw a line from tile 1 to tile 2
             context.strokeStyle = "#ff0000";
             context.beginPath();
@@ -474,14 +474,14 @@ window.onload = function() {
     
     // Create a random level
     function createLevel() {
-        let done = false;
-
+        var done = false;
+        
         // Keep generating levels until it is correct
         while (!done) {
         
             // Create a level with random tiles
-            for (let i=0; i<level.columns; i++) {
-                for (let j=0; j<level.rows; j++) {
+            for (var i=0; i<level.columns; i++) {
+                for (var j=0; j<level.rows; j++) {
                     level.tiles[i][j].type = getRandomTile();
                 }
             }
@@ -525,28 +525,24 @@ window.onload = function() {
     
     // Find clusters in the level
     function findClusters() {
-        let matchlength;
-        let checkcluster;
-        let i;
-        let j;
-// Reset clusters
+        // Reset clusters
         clusters = []
         
         // Find horizontal clusters
-        for (j = 0; j<level.rows; j++) {
+        for (var j=0; j<level.rows; j++) {
             // Start with a single tile, cluster of 1
-            matchlength = 1;
-            for (i = 0; i<level.columns; i++) {
-                checkcluster = false;
-
-                if (i === level.columns-1) {
+            var matchlength = 1;
+            for (var i=0; i<level.columns; i++) {
+                var checkcluster = false;
+                
+                if (i == level.columns-1) {
                     // Last tile
                     checkcluster = true;
                 } else {
                     // Check the type of the next tile
-                    if (level.tiles[i][j].type === level.tiles[i+1][j].type &&
-                        level.tiles[i][j].type !== -1) {
-                        // Same type as the previous tile, increase match length
+                    if (level.tiles[i][j].type == level.tiles[i+1][j].type &&
+                        level.tiles[i][j].type != -1) {
+                        // Same type as the previous tile, increase matchlength
                         matchlength += 1;
                     } else {
                         // Different type
@@ -568,20 +564,20 @@ window.onload = function() {
         }
 
         // Find vertical clusters
-        for (i = 0; i<level.columns; i++) {
+        for (var i=0; i<level.columns; i++) {
             // Start with a single tile, cluster of 1
-            matchlength = 1;
-            for (j = 0; j<level.rows; j++) {
-                checkcluster = false;
-
-                if (j === level.rows-1) {
+            var matchlength = 1;
+            for (var j=0; j<level.rows; j++) {
+                var checkcluster = false;
+                
+                if (j == level.rows-1) {
                     // Last tile
                     checkcluster = true;
                 } else {
                     // Check the type of the next tile
-                    if (level.tiles[i][j].type === level.tiles[i][j+1].type &&
-                        level.tiles[i][j].type !== -1) {
-                        // Same type as the previous tile, increase match length
+                    if (level.tiles[i][j].type == level.tiles[i][j+1].type &&
+                        level.tiles[i][j].type != -1) {
+                        // Same type as the previous tile, increase matchlength
                         matchlength += 1;
                     } else {
                         // Different type
@@ -605,14 +601,12 @@ window.onload = function() {
     
     // Find available moves
     function findMoves() {
-        let i;
-        let j;
-// Reset moves
+        // Reset moves
         moves = []
         
         // Check horizontal swaps
-        for (j = 0; j<level.rows; j++) {
-            for (i = 0; i<level.columns-1; i++) {
+        for (var j=0; j<level.rows; j++) {
+            for (var i=0; i<level.columns-1; i++) {
                 // Swap, find clusters and swap back
                 swap(i, j, i+1, j);
                 findClusters();
@@ -627,8 +621,8 @@ window.onload = function() {
         }
         
         // Check vertical swaps
-        for (i = 0; i<level.columns; i++) {
-            for (j = 0; j<level.rows-1; j++) {
+        for (var i=0; i<level.columns; i++) {
+            for (var j=0; j<level.rows-1; j++) {
                 // Swap, find clusters and swap back
                 swap(i, j, i, j+1);
                 findClusters();
@@ -648,12 +642,12 @@ window.onload = function() {
     
     // Loop over the cluster tiles and execute a function
     function loopClusters(func) {
-        for (let i=0; i<clusters.length; i++) {
+        for (var i=0; i<clusters.length; i++) {
             //  { column, row, length, horizontal }
-            const cluster = clusters[i];
-            let coffset = 0;
-            let roffset = 0;
-            for (let j=0; j<cluster.length; j++) {
+            var cluster = clusters[i];
+            var coffset = 0;
+            var roffset = 0;
+            for (var j=0; j<cluster.length; j++) {
                 func(i, cluster.column+coffset, cluster.row+roffset, cluster);
                 
                 if (cluster.horizontal) {
@@ -668,14 +662,14 @@ window.onload = function() {
     // Remove the clusters
     function removeClusters() {
         // Change the type of the tiles to -1, indicating a removed tile
-        loopClusters(function(index, column, row) { level.tiles[column][row].type = -1; });
+        loopClusters(function(index, column, row, cluster) { level.tiles[column][row].type = -1; });
 
         // Calculate how much a tile should be shifted downwards
-        for (let i=0; i<level.columns; i++) {
-            let shift = 0;
-            for (let j=level.rows-1; j>=0; j--) {
+        for (var i=0; i<level.columns; i++) {
+            var shift = 0;
+            for (var j=level.rows-1; j>=0; j--) {
                 // Loop from bottom to top
-                if (level.tiles[i][j].type === -1) {
+                if (level.tiles[i][j].type == -1) {
                     // Tile is removed, increase shift
                     shift++;
                     level.tiles[i][j].shift = 0;
@@ -690,15 +684,15 @@ window.onload = function() {
     // Shift tiles and insert new tiles
     function shiftTiles() {
         // Shift tiles
-        for (let i=0; i<level.columns; i++) {
-            for (let j=level.rows-1; j>=0; j--) {
+        for (var i=0; i<level.columns; i++) {
+            for (var j=level.rows-1; j>=0; j--) {
                 // Loop from bottom to top
-                if (level.tiles[i][j].type === -1) {
+                if (level.tiles[i][j].type == -1) {
                     // Insert new random tile
                     level.tiles[i][j].type = getRandomTile();
                 } else {
                     // Swap tile to shift it
-                    const shift = level.tiles[i][j].shift;
+                    var shift = level.tiles[i][j].shift;
                     if (shift > 0) {
                         swap(i, j, i, j+shift)
                     }
@@ -713,9 +707,9 @@ window.onload = function() {
     // Get the tile under the mouse
     function getMouseTile(pos) {
         // Calculate the index of the tile
-        const tx = Math.floor((pos.x - level.x) / level.tilewidth);
-        const ty = Math.floor((pos.y - level.y) / level.tileheight);
-
+        var tx = Math.floor((pos.x - level.x) / level.tilewidth);
+        var ty = Math.floor((pos.y - level.y) / level.tileheight);
+        
         // Check if the tile is valid
         if (tx >= 0 && tx < level.columns && ty >= 0 && ty < level.rows) {
             // Tile is valid
@@ -737,13 +731,17 @@ window.onload = function() {
     // Check if two tiles can be swapped
     function canSwap(x1, y1, x2, y2) {
         // Check if the tile is a direct neighbor of the selected tile
-        return (Math.abs(x1 - x2) === 1 && y1 === y2) ||
-            (Math.abs(y1 - y2) === 1 && x1 === x2);
+        if ((Math.abs(x1 - x2) == 1 && y1 == y2) ||
+            (Math.abs(y1 - y2) == 1 && x1 == x2)) {
+            return true;
+        }
+        
+        return false;
     }
     
     // Swap two tiles in the level
     function swap(x1, y1, x2, y2) {
-        const typeswap = level.tiles[x1][y1].type;
+        var typeswap = level.tiles[x1][y1].type;
         level.tiles[x1][y1].type = level.tiles[x2][y2].type;
         level.tiles[x2][y2].type = typeswap;
     }
@@ -765,18 +763,17 @@ window.onload = function() {
     // On mouse movement
     function onMouseMove(e) {
         // Get the mouse position
-        const pos = getMousePos(canvas, e);
-
+        var pos = getMousePos(canvas, e);
+        
         // Check if we are dragging with a tile selected
-        let mt;
         if (drag && level.selectedtile.selected) {
             // Get the tile under the mouse
             mt = getMouseTile(pos);
             if (mt.valid) {
                 // Valid tile
-
+                
                 // Check if the tiles can be swapped
-                if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
+                if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)){
                     // Swap the tiles
                     mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
                 }
@@ -787,30 +784,29 @@ window.onload = function() {
     // On mouse button click
     function onMouseDown(e) {
         // Get the mouse position
-        const pos = getMousePos(canvas, e);
-
+        var pos = getMousePos(canvas, e);
+        
         // Start dragging
-        let mt;
         if (!drag) {
             // Get the tile under the mouse
             mt = getMouseTile(pos);
-
+            
             if (mt.valid) {
                 // Valid tile
-                let swapped = false;
+                var swapped = false;
                 if (level.selectedtile.selected) {
-                    if (mt.x === level.selectedtile.column && mt.y === level.selectedtile.row) {
+                    if (mt.x == level.selectedtile.column && mt.y == level.selectedtile.row) {
                         // Same tile selected, deselect
                         level.selectedtile.selected = false;
                         drag = true;
                         return;
-                    } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
+                    } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)){
                         // Tiles can be swapped, swap the tiles
                         mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
                         swapped = true;
                     }
                 }
-
+                
                 if (!swapped) {
                     // Set the new selected tile
                     level.selectedtile.column = mt.x;
@@ -827,19 +823,19 @@ window.onload = function() {
         }
         
         // Check if a button was clicked
-        for (let i=0; i<buttons.length; i++) {
+        for (var i=0; i<buttons.length; i++) {
             if (pos.x >= buttons[i].x && pos.x < buttons[i].x+buttons[i].width &&
                 pos.y >= buttons[i].y && pos.y < buttons[i].y+buttons[i].height) {
                 
                 // Button i was clicked
-                if (i === 0) {
+                if (i == 0) {
                     // New Game
                     newGame();
-                } else if (i === 1) {
+                } else if (i == 1) {
                     // Show Moves
                     showmoves = !showmoves;
                     buttons[i].text = (showmoves?"Hide":"Show") + " Moves";
-                } else if (i === 2) {
+                } else if (i == 2) {
                     // AI Bot
                     aibot = !aibot;
                     buttons[i].text = (aibot?"Disable":"Enable") + " AI Bot";
@@ -850,19 +846,17 @@ window.onload = function() {
     
     function onMouseUp(e) {
         // Reset dragging
-        console.info({ e });
         drag = false;
     }
     
     function onMouseOut(e) {
         // Reset dragging
-        console.info({e});
         drag = false;
     }
     
     // Get the mouse position
     function getMousePos(canvas, e) {
-        const rect = canvas.getBoundingClientRect();
+        var rect = canvas.getBoundingClientRect();
         return {
             x: Math.round((e.clientX - rect.left)/(rect.right - rect.left)*canvas.width),
             y: Math.round((e.clientY - rect.top)/(rect.bottom - rect.top)*canvas.height)
