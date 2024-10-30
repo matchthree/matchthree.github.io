@@ -741,12 +741,10 @@ window.onload = function() {
     // Check if two tiles can be swapped
     function canSwap(x1, y1, x2, y2) {
         // Check if the tile is a direct neighbor of the selected tile
-        if ((Math.abs(x1 - x2) === 1 && y1 === y2) ||
-            (Math.abs(y1 - y2) === 1 && x1 === x2)) {
-            return true;
-        }
+        return (Math.abs(x1 - x2) === 1 && y1 === y2) ||
+            (Math.abs(y1 - y2) === 1 && x1 === x2);
 
-        return false;
+
     }
 
     // Swap two tiles in the level
