@@ -3,10 +3,12 @@ import { GAME_CONFIG } from './config';
 
 export class GameRenderer {
     private context: CanvasRenderingContext2D;
+    private canvas: HTMLCanvasElement;
     private fps: number;
 
-    constructor(context: CanvasRenderingContext2D) {
-        this.context = context;
+    constructor(canvas: HTMLCanvasElement) {
+        this.canvas = canvas;
+        this.context = canvas.getContext('2d')!;
         this.fps = 0;
     }
 
@@ -17,13 +19,13 @@ export class GameRenderer {
     public drawFrame(canvas: HTMLCanvasElement): void {
         // Draw background and border
         this.context.fillStyle = "#d0d0d0";
-        this.context.fillRect(0, 0, canvas.width, canvas.height);
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.fillStyle = "#e8eaec";
-        this.context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
+        this.context.fillRect(1, 1, this.canvas.width - 2, this.canvas.height - 2);
 
         // Draw header
         this.context.fillStyle = "#303030";
-        this.context.fillRect(0, 0, canvas.width, 65);
+        this.context.fillRect(0, 0, this.canvas.width, 65);
 
         // Draw title
         this.context.fillStyle = "#ffffff";
@@ -161,20 +163,20 @@ export class GameRenderer {
     public drawScore(score: number): void {
         this.context.fillStyle = "#ffffff";
         this.context.font = "18px Verdana";
-        this.context.fillText(`Score: ${score}`, canvas.width - 140, 30);
+        this.context.fillText(`Score: ${score}`, this.canvas.width - 140, 30);
     }
 
     public drawGameOver(): void {
         this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
-        this.context.fillRect(0, 0, canvas.width, canvas.height);
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         this.context.fillStyle = "#ffffff";
         this.context.font = "24px Verdana";
         const textDim = this.context.measureText("Game Over!");
         this.context.fillText(
             "Game Over!", 
-            (canvas.width - textDim.width) / 2, 
-            canvas.height / 2
+            (this.canvas.width - textDim.width) / 2, 
+            this.canvas.height / 2
         );
     }
 }
