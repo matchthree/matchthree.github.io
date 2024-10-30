@@ -22,5 +22,8 @@
      /* Include specific types */
      "types": ["codemirror"]
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "node_modules/@types/jest/index.d.ts"
+  ]
 }

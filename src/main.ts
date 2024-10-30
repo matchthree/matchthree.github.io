@@ -1,3 +1,5 @@
+import { getRandomTile, swap, level, tilecolors, findClusters, findMoves, removeClusters, shiftTiles } from './gameLogic';
+
 window.onload = function() {
     const canvas = document.getElementById("viewport") as HTMLCanvasElement;
     const context = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -33,27 +35,6 @@ window.onload = function() {
     let fps = 0;
     let drag = false;
 
-    const level: Level = {
-        x: 250,
-        y: 113,
-        columns: 8,
-        rows: 8,
-        tilewidth: 40,
-        tileheight: 40,
-        tiles: [],
-        selectedtile: { selected: false, column: 0, row: 0 }
-    };
-
-    const tilecolors: number[][] = [
-        [255, 128, 128],
-        [128, 255, 128],
-        [128, 128, 255],
-        [255, 255, 128],
-        [255, 128, 255],
-        [128, 255, 255],
-        [255, 255, 255]
-    ];
-
     let clusters: Cluster[] = [];
     let moves: Move[] = [];
     let currentmove: Move = { column1: 0, row1: 0, column2: 0, row2: 0 };
@@ -80,13 +61,6 @@ window.onload = function() {
         canvas.addEventListener("mousedown", onMouseDown);
         canvas.addEventListener("mouseup", onMouseUp);
         canvas.addEventListener("mouseout", onMouseOut);
-
-        for (let i = 0; i < level.columns; i++) {
-            level.tiles[i] = [];
-            for (let j = 0; j < level.rows; j++) {
-                level.tiles[i][j] = { type: 0, shift: 0 };
-            }
-        }
 
         newGame();
         main(0);
@@ -362,10 +336,6 @@ window.onload = function() {
         }
     }
 
-    function getRandomTile() {
-        return Math.floor(Math.random() * tilecolors.length);
-    }
-
     function resolveClusters() {
         findClusters();
 
@@ -374,162 +344,6 @@ window.onload = function() {
             shiftTiles();
             findClusters();
         }
-    }
-
-    function findClusters() {
-        clusters = [];
-
-        for (let j = 0; j < level.rows; j++) {
-            let matchlength = 1;
-            for (let i = 0; i < level.columns; i++) {
-                let checkcluster = false;
-
-                if (i === level.columns - 1) {
-                    checkcluster = true;
-                } else {
-                    if (level.tiles[i][j].type === level.tiles[i + 1][j].type && level.tiles[i][j].type !== -1) {
-                        matchlength += 1;
-                    } else {
-                        checkcluster = true;
-                    }
-                }
-
-                if (checkcluster) {
-                    if (matchlength >= 3) {
-                        clusters.push({ column: i + 1 - matchlength, row: j, length: matchlength, horizontal: true });
-                    }
-                    matchlength = 1;
-                }
-            }
-        }
-
-        for (let i = 0; i < level.columns; i++) {
-            let matchlength = 1;
-            for (let j = 0; j < level.rows; j++) {
-                let checkcluster = false;
-
-                if (j === level.rows - 1) {
-                    checkcluster = true;
-                } else {
-                    if (level.tiles[i][j].type === level.tiles[i][j + 1].type && level.tiles[i][j].type !== -1) {
-                        matchlength += 1;
-                    } else {
-                        checkcluster = true;
-                    }
-                }
-
-                if (checkcluster) {
-                    if (matchlength >= 3) {
-                        clusters.push({ column: i, row: j + 1 - matchlength, length: matchlength, horizontal: false });
-                    }
-                    matchlength = 1;
-                }
-            }
-        }
-    }
-
-    function findMoves() {
-        moves = [];
-
-        for (let j = 0; j < level.rows; j++) {
-            for (let i = 0; i < level.columns - 1; i++) {
-                swap(i, j, i + 1, j);
-                findClusters();
-                swap(i, j, i + 1, j);
-
-                if (clusters.length > 0) {
-                    moves.push({ column1: i, row1: j, column2: i + 1, row2: j });
-                }
-            }
-        }
-
-        for (let i = 0; i < level.columns; i++) {
-            for (let j = 0; j < level.rows - 1; j++) {
-                swap(i, j, i, j + 1);
-                findClusters();
-                swap(i, j, i, j + 1);
-
-                if (clusters.length > 0) {
-                    moves.push({ column1: i, row1: j, column2: i, row2: j + 1 });
-                }
-            }
-        }
-
-        clusters = [];
-    }
-
-    function loopClusters(func: (index: number, column: number, row: number, cluster: Cluster) => void) {
-        for (let i = 0; i < clusters.length; i++) {
-            const cluster = clusters[i];
-            let coffset = 0;
-            let roffset = 0;
-            for (let j = 0; j < cluster.length; j++) {
-                func(i, cluster.column + coffset, cluster.row + roffset, cluster);
-
-                if (cluster.horizontal) {
-                    coffset++;
-                } else {
-                    roffset++;
-                }
-            }
-        }
-    }
-
-    function removeClusters() {
-        loopClusters((index, column, row, cluster) => {
-            console.info(index);
-            console.info(cluster);
-            level.tiles[column][row].type = -1;
-        });
-
-        for (let i = 0; i < level.columns; i++) {
-            let shift = 0;
-            for (let j = level.rows - 1; j >= 0; j--) {
-                if (level.tiles[i][j].type === -1) {
-                    shift++;
-                    level.tiles[i][j].shift = 0;
-                } else {
-                    level.tiles[i][j].shift = shift;
-                }
-            }
-        }
-    }
-
-    function shiftTiles() {
-        for (let i = 0; i < level.columns; i++) {
-            for (let j = level.rows - 1; j >= 0; j--) {
-                if (level.tiles[i][j].type === -1) {
-                    level.tiles[i][j].type = getRandomTile();
-                } else {
-                    const shift = level.tiles[i][j].shift;
-                    if (shift > 0) {
-                        swap(i, j, i, j + shift);
-                    }
-                }
-                level.tiles[i][j].shift = 0;
-            }
-        }
-    }
-
-    function getMouseTile(pos: { x: number; y: number }) {
-        const tx = Math.floor((pos.x - level.x) / level.tilewidth);
-        const ty = Math.floor((pos.y - level.y) / level.tileheight);
-
-        if (tx >= 0 && tx < level.columns && ty >= 0 && ty < level.rows) {
-            return { valid: true, x: tx, y: ty };
-        }
-
-        return { valid: false, x: 0, y: 0 };
-    }
-
-    function canSwap(x1: number, y1: number, x2: number, y2: number) {
-        return (Math.abs(x1 - x2) === 1 && y1 === y2) || (Math.abs(y1 - y2) === 1 && x1 === x2);
-    }
-
-    function swap(x1: number, y1: number, x2: number, y2: number) {
-        const typeswap = level.tiles[x1][y1].type;
-        level.tiles[x1][y1].type = level.tiles[x2][y2].type;
-        level.tiles[x2][y2].type = typeswap;
     }
 
     function mouseSwap(c1: number, r1: number, c2: number, r2: number) {
@@ -600,12 +414,12 @@ window.onload = function() {
     }
 
     function onMouseUp(e: MouseEvent) {
-        console.info(e);
+        console.info({ e });
         drag = false;
     }
 
     function onMouseOut(e: MouseEvent) {
-        console.info(e);
+        console.info({ e });
         drag = false;
     }
 
@@ -617,6 +431,21 @@ window.onload = function() {
         };
     }
 
+    function getMouseTile(pos: { x: number; y: number }) {
+        const tx = Math.floor((pos.x - level.x) / level.tilewidth);
+        const ty = Math.floor((pos.y - level.y) / level.tileheight);
+
+        if (tx >= 0 && tx < level.columns && ty >= 0 && ty < level.rows) {
+            return { valid: true, x: tx, y: ty };
+        }
+
+        return { valid: false, x: 0, y: 0 };
+    }
+
+    function canSwap(x1: number, y1: number, x2: number, y2: number) {
+        return (Math.abs(x1 - x2) === 1 && y1 === y2) || (Math.abs(y1 - y2) === 1 && x1 === x2);
+    }
+
     init();
     resizeCanvas(); // Initial resize
 
@@ -626,11 +455,8 @@ window.onload = function() {
 
         for (let j = 0; j < level.rows; j++) {
             for (let i = 0; i < level.columns - 1; i++) {
-                // Swap tiles
                 swap(i, j, i + 1, j);
-                // Evaluate the board
                 const score = evaluateBoard();
-                // Swap back
                 swap(i, j, i + 1, j);
 
                 if (score > bestScore) {
@@ -642,11 +468,8 @@ window.onload = function() {
 
         for (let i = 0; i < level.columns; i++) {
             for (let j = 0; j < level.rows - 1; j++) {
-                // Swap tiles
                 swap(i, j, i, j + 1);
-                // Evaluate the board
                 const score = evaluateBoard();
-                // Swap back
                 swap(i, j, i, j + 1);
 
                 if (score > bestScore) {
@@ -660,33 +483,9 @@ window.onload = function() {
     }
 
     function evaluateBoard() {
-        // Implement your logic to evaluate the board and return a score
-        // This could involve finding clusters and calculating the potential score
         return Math.random(); // Placeholder
     }
 };
-
-interface Tile {
-    type: number;
-    shift: number;
-}
-
-interface SelectedTile {
-    selected: boolean;
-    column: number;
-    row: number;
-}
-
-interface Level {
-    x: number;
-    y: number;
-    columns: number;
-    rows: number;
-    tilewidth: number;
-    tileheight: number;
-    tiles: Tile[][];
-    selectedtile: SelectedTile;
-}
 
 interface Move {
     column1: number;
