@@ -21,7 +21,7 @@
 // The function gets called when the window is fully loaded
 window.onload = function() {
     // Get the canvas and context
-    var canvas = document.getElementById("viewport");
+    var canvas = document.getElementById("viewport") as HTMLCanvasElement;
     var context = canvas.getContext("2d");
 
     // Timing and frames per second
