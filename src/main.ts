@@ -16,19 +16,22 @@ class GameLoader {
 
     private initialize(): void {
         console.log('Initializing game...');
-        console.log('Document ready state:', document.readyState);
         
         // Get the canvas element
-        const canvas = document.querySelector<HTMLCanvasElement>('#gameCanvas');
-        console.log('Canvas element:', canvas);
+        const canvasElement = document.getElementById('gameCanvas');
+        console.log('Canvas element:', canvasElement);
 
-        if (!canvas) {
+        if (!canvasElement || !(canvasElement instanceof HTMLCanvasElement)) {
             console.error('Could not find canvas element with id "gameCanvas"');
             return;
         }
 
+        // Set canvas size
+        canvasElement.width = 800;
+        canvasElement.height = 600;
+
         // Initialize the game
-        this.game = new Game(canvas);
+        this.game = new Game(canvasElement);
         
         // Start the game loop
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));

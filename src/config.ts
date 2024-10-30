@@ -1,3 +1,4 @@
+import { GameState } from "./types";
 export const GAME_CONFIG = {
     ANIMATION_TIME_TOTAL: 0.3,
     INITIAL_LEVEL: {

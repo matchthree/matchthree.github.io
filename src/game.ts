@@ -26,6 +26,10 @@ export class Game {
     private gameOver: boolean = false;
 
     constructor(canvas: HTMLCanvasElement) {
+        if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
+            throw new Error('Invalid canvas element provided to Game constructor');
+        }
+        
         this.canvas = canvas;
         this.renderer = new GameRenderer(canvas);
         this.level = this.initializeLevel();
@@ -51,6 +55,11 @@ export class Game {
             y: GAME_CONFIG.INITIAL_LEVEL.y,
             columns: GAME_CONFIG.INITIAL_LEVEL.columns,
             rows: GAME_CONFIG.INITIAL_LEVEL.rows,
+            selectedtile: {
+                selected: false,
+                column: 0,
+                row: 0
+            },
             tilewidth: GAME_CONFIG.INITIAL_LEVEL.tilewidth,
             tileheight: GAME_CONFIG.INITIAL_LEVEL.tileheight,
             tiles: []
