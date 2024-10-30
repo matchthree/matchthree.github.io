@@ -19,3 +19,22 @@ export interface Tile {
     shift: number;
     selected?: boolean;
 }
+
+export interface Level {
+    x: number;
+    y: number;
+    columns: number;
+    rows: number;
+    tileWidth: number;
+    tileHeight: number;
+    tiles: Tile[][];
+    selectedTile: Tile;
+}
+
+export interface Button {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    text: string;
+}

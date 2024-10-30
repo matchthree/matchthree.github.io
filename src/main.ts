@@ -1,5 +1,5 @@
 import {SayHelloWorld} from "./sayHelloWorld.ts";
-import {Cluster, Move, Tile} from "./types.ts";
+import {Cluster, Level, Move, Tile} from "./types.ts";
 
 // ------------------------------------------------------------------------
 // How To Make A Match-3 Game With HTML5 Canvas
@@ -39,13 +39,13 @@ window.onload = function() {
     let drag = false;
 
     // Level object
-    let level = {
+    let level: Level = {
         x: 250,         // X position
         y: 113,         // Y position
         columns: 8,     // Number of tile columns
         rows: 8,        // Number of tile rows
-        tilewidth: 40,  // Visual width of a tile
-        tileheight: 40, // Visual height of a tile
+        tileWidth: 40,  // Visual width of a tile
+        tileHeight: 40, // Visual height of a tile
         tiles: [] as Tile[][],      // The two-dimensional tile array
         selectedTile: { selected: false, column: 0, row: 0 } as Tile,
     };
@@ -105,7 +105,8 @@ window.onload = function() {
             level.tiles[i] = [];
             for (let j=0; j<level.rows; j++) {
                 // Define a tile type and a shift parameter for animation
-                level.tiles[i][j] = { type: 0, shift:0 }
+                level.tiles[i][j] = {column: 0, row: 0, type: 0, shift: 0 }
+                console.info({ level });
             }
         }
 
@@ -284,8 +285,8 @@ window.onload = function() {
         drawButtons();
 
         // Draw level background
-        let levelwidth = level.columns * level.tilewidth;
-        let levelheight = level.rows * level.tileheight;
+        let levelwidth = level.columns * level.tileWidth;
+        let levelheight = level.rows * level.tileHeight;
         context.fillStyle = "#000000";
         context.fillRect(level.x - 4, level.y - 4, levelwidth + 8, levelheight + 8);
 
@@ -413,15 +414,15 @@ window.onload = function() {
 
     // Get the tile coordinate
     function getTileCoordinate(column, row, columnoffset, rowoffset) {
-        let tilex = level.x + (column + columnoffset) * level.tilewidth;
-        let tiley = level.y + (row + rowoffset) * level.tileheight;
+        let tilex = level.x + (column + columnoffset) * level.tileWidth;
+        let tiley = level.y + (row + rowoffset) * level.tileHeight;
         return { tilex: tilex, tiley: tiley};
     }
 
     // Draw a tile with a color
     function drawTile(x, y, r, g, b) {
         context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
-        context.fillRect(x + 2, y + 2, level.tilewidth - 4, level.tileheight - 4);
+        context.fillRect(x + 2, y + 2, level.tileWidth - 4, level.tileHeight - 4);
     }
 
     // Render clusters
@@ -433,11 +434,11 @@ window.onload = function() {
             if (clusters[i].horizontal) {
                 // Draw a horizontal line
                 context.fillStyle = "#00ff00";
-                context.fillRect(coord.tilex + level.tilewidth/2, coord.tiley + level.tileheight/2 - 4, (clusters[i].length - 1) * level.tilewidth, 8);
+                context.fillRect(coord.tilex + level.tileWidth/2, coord.tiley + level.tileHeight/2 - 4, (clusters[i].length - 1) * level.tileWidth, 8);
             } else {
                 // Draw a vertical line
                 context.fillStyle = "#0000ff";
-                context.fillRect(coord.tilex + level.tilewidth/2 - 4, coord.tiley + level.tileheight/2, 8, (clusters[i].length - 1) * level.tileheight);
+                context.fillRect(coord.tilex + level.tileWidth/2 - 4, coord.tiley + level.tileHeight/2, 8, (clusters[i].length - 1) * level.tileHeight);
             }
         }
     }
@@ -452,8 +453,8 @@ window.onload = function() {
             // Draw a line from tile 1 to tile 2
             context.strokeStyle = "#ff0000";
             context.beginPath();
-            context.moveTo(coord1.tilex + level.tilewidth/2, coord1.tiley + level.tileheight/2);
-            context.lineTo(coord2.tilex + level.tilewidth/2, coord2.tiley + level.tileheight/2);
+            context.moveTo(coord1.tilex + level.tileWidth/2, coord1.tiley + level.tileHeight/2);
+            context.lineTo(coord2.tilex + level.tileWidth/2, coord2.tiley + level.tileHeight/2);
             context.stroke();
         }
     }
@@ -716,8 +717,8 @@ window.onload = function() {
     // Get the tile under the mouse
     function getMouseTile(pos) {
         // Calculate the index of the tile
-        let tx = Math.floor((pos.x - level.x) / level.tilewidth);
-        let ty = Math.floor((pos.y - level.y) / level.tileheight);
+        let tx = Math.floor((pos.x - level.x) / level.tileWidth);
+        let ty = Math.floor((pos.y - level.y) / level.tileHeight);
 
         // Check if the tile is valid
         if (tx >= 0 && tx < level.columns && ty >= 0 && ty < level.rows) {
