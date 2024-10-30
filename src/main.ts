@@ -1,5 +1,5 @@
 import {SayHelloWorld} from "./sayHelloWorld.ts";
-import {Cluster, createTile, Move} from "./types.ts";
+import {Cluster, Move, Tile} from "./types.ts";
 
 // ------------------------------------------------------------------------
 // How To Make A Match-3 Game With HTML5 Canvas
@@ -46,8 +46,8 @@ window.onload = function() {
         rows: 8,        // Number of tile rows
         tilewidth: 40,  // Visual width of a tile
         tileheight: 40, // Visual height of a tile
-        tiles: [],      // The two-dimensional tile array
-        selectedtile: createTile(0, 0, false) // { selected: false, column: 0, row: 0 }
+        tiles: [] as Tile[][],      // The two-dimensional tile array
+        selectedTile: { selected: false, column: 0, row: 0 } as Tile,
     };
 
     // All of the different tile colors in RGB
@@ -369,8 +369,8 @@ window.onload = function() {
                 }
 
                 // Draw the selected tile
-                if (level.selectedtile.selected) {
-                    if (level.selectedtile.column === i && level.selectedtile.row === j) {
+                if (level.selectedTile.selected) {
+                    if (level.selectedTile.column === i && level.selectedTile.row === j) {
                         // Draw a red tile
                         drawTile(coord.tilex, coord.tiley, 255, 0, 0);
                     }
@@ -761,7 +761,7 @@ window.onload = function() {
         currentmove = {column1: c1, row1: r1, column2: c2, row2: r2};
 
         // Deselect
-        level.selectedtile.selected = false;
+        level.selectedTile.selected = false;
 
         // Start animation
         animationstate = 2;
@@ -775,16 +775,16 @@ window.onload = function() {
         let pos = getMousePos(canvas, e);
 
         // Check if we are dragging with a tile selected
-        if (drag && level.selectedtile.selected) {
+        if (drag && level.selectedTile.selected) {
             // Get the tile under the mouse
             let mt = getMouseTile(pos);
             if (mt.valid) {
                 // Valid tile
 
                 // Check if the tiles can be swapped
-                if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)){
+                if (canSwap(mt.x, mt.y, level.selectedTile.column, level.selectedTile.row)){
                     // Swap the tiles
-                    mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
+                    mouseSwap(mt.x, mt.y, level.selectedTile.column, level.selectedTile.row);
                 }
             }
         }
@@ -804,28 +804,28 @@ window.onload = function() {
             if (mt.valid) {
                 // Valid tile
                 let swapped = false;
-                if (level.selectedtile.selected) {
-                    if (mt.x === level.selectedtile.column && mt.y === level.selectedtile.row) {
+                if (level.selectedTile.selected) {
+                    if (mt.x === level.selectedTile.column && mt.y === level.selectedTile.row) {
                         // Same tile selected, deselect
-                        level.selectedtile.selected = false;
+                        level.selectedTile.selected = false;
                         drag = true;
                         return;
-                    } else if (canSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row)) {
+                    } else if (canSwap(mt.x, mt.y, level.selectedTile.column, level.selectedTile.row)) {
                         // Tiles can be swapped, swap the tiles
-                        mouseSwap(mt.x, mt.y, level.selectedtile.column, level.selectedtile.row);
+                        mouseSwap(mt.x, mt.y, level.selectedTile.column, level.selectedTile.row);
                         swapped = true;
                     }
                 }
 
                 if (!swapped) {
                     // Set the new selected tile
-                    level.selectedtile.column = mt.x;
-                    level.selectedtile.row = mt.y;
-                    level.selectedtile.selected = true;
+                    level.selectedTile.column = mt.x;
+                    level.selectedTile.row = mt.y;
+                    level.selectedTile.selected = true;
                 }
             } else {
                 // Invalid tile
-                level.selectedtile.selected = false;
+                level.selectedTile.selected = false;
             }
 
             // Start dragging
