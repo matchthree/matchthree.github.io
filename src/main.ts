@@ -50,7 +50,7 @@ window.onload = function() {
         selectedTile: { selected: false, column: 0, row: 0 } as Tile,
     };
 
-    // All of the different tile colors in RGB
+    // All the different tile colors in RGB
     let tilecolors = [[255, 128, 128],
         [128, 255, 128],
         [128, 128, 255],
