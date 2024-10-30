@@ -1,3 +1,5 @@
+import {SayHelloWorld} from "./sayHelloWorld.ts";
+
 // ------------------------------------------------------------------------
 // How To Make A Match-3 Game With HTML5 Canvas
 // Copyright (c) 2015 Rembound.com
@@ -20,6 +22,8 @@
 
 // The function gets called when the window is fully loaded
 window.onload = function() {
+    const currentDate = new Date();
+    SayHelloWorld(currentDate);
     // Get the canvas and context
     var canvas = document.getElementById("viewport") as HTMLCanvasElement;
     var context = canvas.getContext("2d");
